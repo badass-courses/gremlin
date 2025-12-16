@@ -1,0 +1,3 @@
+[submodule "legacy/course-builder"]
+	path = legacy/course-builder
+	url = https://github.com/badass-courses/course-builder
