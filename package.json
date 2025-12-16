@@ -11,7 +11,8 @@
 		"dev": "turbo dev",
 		"lint": "turbo lint",
 		"format": "biome format --write .",
-		"typecheck": "tsgo --noEmit"
+		"typecheck": "tsgo --noEmit",
+		"add:web": "bun add --cwd apps/wizardshit-ai"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.9",
