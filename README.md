@@ -34,6 +34,24 @@
 
 Monorepo for the next-generation badass course platform. Extracted patterns from [course-builder](https://github.com/badass-courses/course-builder), rebuilt from scratch with modern tooling.
 
+---
+
+## Wisdom from the Ancients
+
+> *"To me, legacy code is simply code without tests."*
+> — **Michael Feathers**, Working Effectively with Legacy Code
+
+> *"The most important issue in designing classes and other modules is to make them deep, so that they have simple interfaces for the common cases."*
+> — **John Ousterhout**, A Philosophy of Software Design
+
+> *"It's not about our product, our company, our brand. It's not about how the user feels about us. It's about how the user feels about himself, in the context of whatever it is our product helps them do."*
+> — **Kathy Sierra**, Badass: Making Users Awesome
+
+> *"Deliberate Practice moves skills from B to C (from 'with effort' to 'mastered'). Deliberate Practice fixes the single biggest problem most people have with learning."*
+> — **Kathy Sierra**, Badass: Making Users Awesome
+
+---
+
 ## Status: Layer 0 Complete
 
 ```
@@ -61,10 +79,12 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - Playwright sharding + change detection
 - ADR (Architecture Decision Records) system
 - Changesets for versioning
-- 159 unit tests + 2 E2E tests passing
+- **159 unit tests + 2 E2E tests passing**
 
 **Key Decisions:**
 - [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model with BetterAuth
+
+---
 
 ## Quick Start
 
@@ -81,6 +101,8 @@ bun test:run
 # Run E2E tests
 bun e2e
 ```
+
+---
 
 ## Architecture
 
@@ -109,6 +131,8 @@ gremlin/
 └── legacy/
     └── course-builder/       # Reference implementation (git submodule)
 ```
+
+---
 
 ## CI/CD Pipeline
 
@@ -150,6 +174,8 @@ Add these to your GitHub repo settings:
 | `TURBO_TOKEN` | Secret | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
 | `TURBO_TEAM` | Variable | Your Vercel team slug |
 
+---
+
 ## Scripts
 
 ```bash
@@ -175,6 +201,8 @@ bun version             # Version packages
 bun release             # Publish to npm
 ```
 
+---
+
 ## Stack
 
 | Tool | Purpose |
@@ -189,6 +217,36 @@ bun release             # Publish to npm
 | **Drizzle** | Database ORM |
 | **Next.js 16** | App framework (Turbopack) |
 
+---
+
+## Philosophy
+
+> *"The 4 Rules of Simple Design: Tests Pass, Reveals Intention, No Duplication, Fewest Elements."*
+> — **Corey Haines** (via Kent Beck)
+
+### Core Principles
+
+- **TDD or GTFO** — Red → Green → Refactor, no exceptions
+- **ADRs for decisions** — Document before implementing
+- **Deep modules** — Simple interfaces hiding complex implementations
+- **Colocation** — Keep related code together
+- **Server first** — Client when necessary
+- **Parse, don't validate** — Make impossible states impossible
+
+### What We Believe
+
+```
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Flat is better than nested.
+Readability counts.
+Practicality beats purity.
+If the implementation is hard to explain, it's a bad idea.
+```
+
+---
+
 ## What's Next
 
 **Layer 1: Auth + Next Adapter**
@@ -199,15 +257,7 @@ bun release             # Publish to npm
 - Local dev database (Docker MySQL/Postgres)
 - App template (`create-badass-app`)
 
-## Philosophy
-
-> "Beautiful is better than ugly. Explicit is better than implicit. Simple is better than complex."
-
-- **TDD or GTFO** - Red → Green → Refactor, no exceptions
-- **ADRs for decisions** - Document before implementing
-- **Colocation** - Keep related code together
-- **Server first** - Client when necessary
-- **Parse, don't validate** - Make impossible states impossible
+---
 
 ## Contributing
 
@@ -233,3 +283,7 @@ bun release             # Publish to npm
     great responsibility...
     to write tests first."
 ```
+
+---
+
+<sub>*"Users of a module need only understand the abstraction provided by its interface."* — Ousterhout</sub>
