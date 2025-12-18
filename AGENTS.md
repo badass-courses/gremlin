@@ -1,5 +1,53 @@
 # AGENTS.md - wizardshit.ai
 
+> **📐 ADR COMMANDMENT (NON-NEGOTIABLE)**
+>
+> **Document architectural decisions BEFORE implementing.**
+>
+> Write an ADR (`docs/adr/NNN-title.md`) when:
+>
+> - Choosing between multiple valid approaches
+> - Making decisions that are hard to reverse
+> - Establishing patterns others will follow
+>
+> ```bash
+> cp docs/adr/_template.md docs/adr/NNN-title.md
+> ```
+>
+> **ADRs are immutable.** To change a decision, write a new ADR that supersedes.
+>
+> **Index**: `docs/adr/README.md` | **Template**: `docs/adr/_template.md`
+
+---
+
+> **🔴 TDD COMMANDMENT (NON-NEGOTIABLE)**
+>
+> ```
+> RED  →  GREEN  →  REFACTOR
+> ```
+>
+> **Every feature. Every bug fix. No exceptions.**
+>
+> 1. **RED**: Write a failing test first. If it passes, your test is wrong.
+> 2. **GREEN**: Minimum code to pass. Hardcode if needed. Just make it green.
+> 3. **REFACTOR**: Clean up while green. Run tests after every change.
+>
+> **Bug fixes**: Write a test that reproduces the bug FIRST. Then fix it.
+>
+> **Existing code**: Write characterization tests to document actual behavior before changing.
+>
+> **Testing Stack**:
+>
+> - **Vitest** + `@effect/vitest` for packages (unit/integration)
+> - **Playwright** for apps (e2e)
+> - `expectTypeOf` for type-level assertions
+>
+> **Run tests**: `cd packages/<pkg> && bun vitest run`
+>
+> **Lore**: `@knowledge/tdd-patterns.md` | `skills_use(name="testing-patterns")`
+
+---
+
 > **⚠️ CRITICAL: DEPENDENCY INSTALLATION**
 >
 > **NEVER modify package.json directly to add dependencies.**
@@ -16,6 +64,37 @@
 > ```
 >
 > The `--filter` flag is BROKEN and installs to root. DO NOT USE IT.
+
+---
+
+> **📦 CHANGESETS: Version Management**
+>
+> Use changesets for all package changes that affect consumers.
+>
+> ```bash
+> # Add a changeset (interactive)
+> bun changeset
+>
+> # Version packages (CI usually does this)
+> bun version
+>
+> # Publish to npm (CI usually does this)
+> bun release
+> ```
+>
+> **When to add a changeset:**
+>
+> - New features (minor)
+> - Bug fixes (patch)
+> - Breaking changes (major)
+> - API changes in `packages/*`
+>
+> **Skip changesets for:**
+>
+> - Internal refactors with no API changes
+> - Documentation updates
+> - Test-only changes
+> - App changes (`apps/*` are ignored)
 
 ## Stack
 
@@ -62,16 +141,51 @@ Default to using Bun instead of Node.js.
 
 ## Testing
 
-Use `bun test` to run tests.
+**Stack**: Vitest + `@effect/vitest` for Effect code, Playwright for e2e.
+
+```bash
+# Run all package tests
+cd packages/core && bun vitest run
+cd packages/db && bun vitest run
+
+# Watch mode
+bun vitest
+```
 
 ```ts
-// index.test.ts
-import { test, expect } from "bun:test";
+// Basic test
+import { describe, test, expect, expectTypeOf } from "vitest";
 
-test("hello world", () => {
-  expect(1).toBe(1);
+describe("feature", () => {
+  test("does the thing", () => {
+    expect(doThing()).toBe(expected);
+  });
 });
+
+// Type-level test
+test("infers correct type", () => {
+  expectTypeOf(myFunction).returns.toEqualTypeOf<string>();
+});
+
+// Effect test (use @effect/vitest)
+import { it } from "@effect/vitest";
+import * as Effect from "effect/Effect";
+
+it.effect("runs effect", () =>
+  Effect.gen(function* () {
+    const result = yield* myEffect;
+    expect(result).toBe(expected);
+  }),
+);
 ```
+
+**Patterns** (from `@knowledge/tdd-patterns.md`):
+
+- **Characterization tests**: Document what code actually does before changing it
+- **Test behavior, not implementation**: Ask "if I refactor, should this test break?"
+- **One assertion per test**: Clear failure messages
+- **Fakes over mocks**: More realistic, less brittle
+- **Arrange-Act-Assert**: Structure every test the same way
 
 ## Frontend
 

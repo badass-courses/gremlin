@@ -1,0 +1,27 @@
+{
+	"name": "@badass/db",
+	"version": "0.0.1",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./schema": "./src/schema/index.ts",
+		"./adapter": "./src/adapter/index.ts",
+		"./utils": "./src/utils/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsgo --noEmit",
+		"lint": "oxlint src/",
+		"format": "biome format src/ --write"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.0.2",
+		"drizzle-orm": "^0.45.1",
+		"nanoid": "^5.1.6",
+		"zod": "^4.2.1"
+	},
+	"devDependencies": {
+		"@badass/test-utils": "workspace:*",
+		"drizzle-kit": "^0.31.8",
+		"typescript": "^5.9.3"
+	}
+}

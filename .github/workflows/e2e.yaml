@@ -1,0 +1,197 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  FORCE_COLOR: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Detect which apps have changed and need E2E tests
+  # ─────────────────────────────────────────────────────────────────────────────
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.filter.outputs.apps }}
+      apps-list: ${{ steps.filter.outputs.apps_files }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed apps
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            apps:
+              - 'apps/**'
+              - 'packages/**'
+          list-files: json
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Build apps for E2E testing
+  # ─────────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build for E2E
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.apps == 'true' || github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/gh-actions/setup
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Build all
+        run: bun turbo build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            apps/*/.next
+            packages/*/dist
+          retention-days: 1
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Run E2E tests with sharding for parallelism
+  # ─────────────────────────────────────────────────────────────────────────────
+  e2e:
+    name: E2E Tests (${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    runs-on: ubuntu-latest
+    needs: [build]
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2]
+        shardTotal: [2]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/gh-actions/setup
+        with:
+          install-playwright: "true"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Run E2E tests
+        run: |
+          cd apps/wizardshit-ai
+          bunx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        env:
+          CI: true
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shardIndex }}
+          path: apps/wizardshit-ai/blob-report
+          retention-days: 1
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Merge sharded reports into single HTML report
+  # ─────────────────────────────────────────────────────────────────────────────
+  merge-reports:
+    name: Merge E2E Reports
+    runs-on: ubuntu-latest
+    needs: [e2e]
+    if: ${{ !cancelled() }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/gh-actions/setup
+        with:
+          install-playwright: "true"
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge reports
+        run: |
+          cd apps/wizardshit-ai
+          bunx playwright merge-reports --reporter html ../../all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_attempt }}
+          path: apps/wizardshit-ai/playwright-report
+          retention-days: 14
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Run only changed tests on PRs (fast feedback)
+  # ─────────────────────────────────────────────────────────────────────────────
+  e2e-changed:
+    name: E2E (Changed Only)
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: github.event_name == 'pull_request' && needs.detect-changes.outputs.apps == 'true'
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./tooling/gh-actions/setup
+        with:
+          install-playwright: "true"
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Build
+        run: bun turbo build
+
+      - name: Run changed E2E tests
+        run: |
+          cd apps/wizardshit-ai
+          bunx playwright test --only-changed=${{ github.event.pull_request.base.ref }}
+        env:
+          CI: true
+        continue-on-error: true
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-changed
+          path: apps/wizardshit-ai/playwright-report
+          retention-days: 7

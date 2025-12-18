@@ -1,0 +1,15 @@
+{
+	"name": "@badass/test-utils",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./index.ts",
+		"./effect": "./effect.ts",
+		"./adapter-tests": "./adapter-tests.ts"
+	},
+	"peerDependencies": {
+		"@badass/db": "workspace:*",
+		"vitest": "^4.0.0"
+	}
+}
