@@ -1,6 +1,70 @@
-# @badass Monorepo
+```
+                                    ___
+                                 .-'   `'.
+                                /         \
+                                |         ;
+                                |         |           ___.--,
+                       _.._     |0) ~ (0) |    _.---'`__.-( (_.
+                __.--'`_.. '.__.\    '--. \_.-' ,.--'`     `""`
+               ( ,.--'`   ',__ /./;   ;, '.__.'`    __
+               _`) )  .---.__.' / |   |\   \__..--""  """--.,_
+              `---' .'.''-._.-'`_./  /\ '.  \ _.-~~~````~~~-._`-.__.'
+                    | |  .' _.-' |  |  \  \  '.               `~---`
+                     \ \/ .'     \  \   '. '-._)
+                      \/ /        \  \    `=.__`~-.
+                      / /\         `) )    / / `"".`\
+                , _.-'.'\ \        / /    ( (     / /
+                 `--~`   ) )    .-'.'      '.'.  | (
+                        (/`    ( (`          ) )  '-;
+                         `      '-;         (-'
 
-Monorepo for badass course platform packages and apps.
+   ██████╗ ██████╗ ███████╗███╗   ███╗██╗     ██╗███╗   ██╗
+  ██╔════╝ ██╔══██╗██╔════╝████╗ ████║██║     ██║████╗  ██║
+  ██║  ███╗██████╔╝█████╗  ██╔████╔██║██║     ██║██╔██╗ ██║
+  ██║   ██║██╔══██╗██╔══╝  ██║╚██╔╝██║██║     ██║██║╚██╗██║
+  ╚██████╔╝██║  ██║███████╗██║ ╚═╝ ██║███████╗██║██║ ╚████║
+   ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝╚═╝╚═╝  ╚═══╝
+
+        The @badass course platform - feed it after midnight
+```
+
+# GREMLIN
+
+> **Don't expose it to bright light. Don't get it wet. And never, ever feed it after midnight.**
+
+Monorepo for the next-generation badass course platform. Extracted patterns from [course-builder](https://github.com/badass-courses/course-builder), rebuilt from scratch with modern tooling.
+
+## Status: Layer 0 Complete
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      PROJECT ROADMAP                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  [████████████████████] Layer 0: Foundation     ✅ COMPLETE     │
+│  [░░░░░░░░░░░░░░░░░░░░] Layer 1: Auth + Next    ⏳ NEXT UP      │
+│  [░░░░░░░░░░░░░░░░░░░░] Layer 2: Commerce       📋 PLANNED      │
+│  [░░░░░░░░░░░░░░░░░░░░] Layer 3: Content        📋 PLANNED      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### What's Built
+
+**Packages:**
+- `@badass/core` - Type-safe router builder, content resource schemas (Zod + Effect)
+- `@badass/db` - Database adapter layer with Drizzle implementation
+
+**Infrastructure:**
+- CI/CD pipeline with intelligent E2E testing
+- Turborepo remote caching
+- Playwright sharding + change detection
+- ADR (Architecture Decision Records) system
+- Changesets for versioning
+- 159 unit tests + 2 E2E tests passing
+
+**Key Decisions:**
+- [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model with BetterAuth
 
 ## Quick Start
 
@@ -18,85 +82,154 @@ bun test:run
 bun e2e
 ```
 
-## Structure
+## Architecture
 
 ```
+gremlin/
 ├── apps/
-│   └── wizardshit-ai/     # Next.js 16 app
+│   └── wizardshit-ai/        # Next.js 16 app (Turbopack)
+│
 ├── packages/
-│   ├── core/              # Core types and router
-│   └── db/                # Database adapter layer
+│   ├── core/                 # Router, schemas, types
+│   │   ├── router/           # Type-safe procedure builder
+│   │   └── schemas/          # Content resource Zod schemas
+│   │
+│   └── db/                   # Database layer
+│       ├── adapter/          # Drizzle adapter implementation
+│       ├── schema/           # Drizzle table definitions
+│       └── utils/            # Position ordering, etc.
+│
 ├── tooling/
-│   ├── gh-actions/        # Reusable GitHub Actions
-│   └── test-utils/        # Shared test utilities
-└── docs/
-    └── adr/               # Architecture Decision Records
+│   ├── gh-actions/           # Reusable GitHub Actions
+│   └── test-utils/           # Shared test utilities
+│
+├── docs/
+│   └── adr/                  # Architecture Decision Records
+│
+└── legacy/
+    └── course-builder/       # Reference implementation (git submodule)
 ```
 
-## CI/CD
+## CI/CD Pipeline
 
-The CI pipeline runs on every push and PR:
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         CI WORKFLOW                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  On Push/PR:                                                    │
+│                                                                 │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐            │
+│  │  Build  │  │Typecheck│  │  Lint   │  │ Format  │  parallel  │
+│  └────┬────┘  └─────────┘  └─────────┘  └─────────┘            │
+│       │                                                         │
+│       ↓                                                         │
+│  ┌─────────┐                                                    │
+│  │  Test   │  159 unit tests                                    │
+│  └─────────┘                                                    │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  E2E (when apps/ or packages/ change):                          │
+│                                                                 │
+│  ┌────────────────────────────────────┐                         │
+│  │  Playwright Shards (2x parallel)   │                         │
+│  │  + --only-changed on PRs           │                         │
+│  │  + Merged HTML reports             │                         │
+│  └────────────────────────────────────┘                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-| Workflow | Purpose |
-|----------|---------|
-| `ci.yaml` | Build, lint, typecheck, unit tests |
-| `e2e.yaml` | Playwright E2E tests with sharding |
+### Enable Remote Caching
 
-### Required Secrets
+Add these to your GitHub repo settings:
 
-To enable Turborepo remote caching, add these to your GitHub repo:
-
-| Secret/Variable | Type | Description |
-|-----------------|------|-------------|
-| `TURBO_TOKEN` | Secret | Vercel Turborepo token |
-| `TURBO_TEAM` | Variable | Vercel team slug |
-
-**Get your token:**
-1. Go to [vercel.com/account/tokens](https://vercel.com/account/tokens)
-2. Create a new token with Turborepo scope
-3. Add as `TURBO_TOKEN` secret in GitHub repo settings
-
-**Get your team slug:**
-1. Go to your Vercel team settings
-2. Copy the team URL slug (e.g., `my-team`)
-3. Add as `TURBO_TEAM` variable in GitHub repo settings
-
-### Intelligent Test Selection
-
-The E2E workflow uses:
-- **Change detection**: Only runs E2E when `apps/` or `packages/` change
-- **Sharding**: Splits tests across 2 parallel runners
-- **`--only-changed`**: On PRs, runs only tests affected by changes
-- **Blob reports**: Merges sharded results into single HTML report
+| Name | Type | Where to Get |
+|------|------|--------------|
+| `TURBO_TOKEN` | Secret | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
+| `TURBO_TEAM` | Variable | Your Vercel team slug |
 
 ## Scripts
 
 ```bash
 # Development
-bun dev              # Start all apps in dev mode
-bun build            # Build all packages and apps
+bun dev                 # Start all apps in dev mode
+bun build               # Build all packages and apps
 
 # Testing
-bun test             # Run unit tests (watch mode)
-bun test:run         # Run unit tests once
-bun test:coverage    # Run with coverage
-bun e2e              # Run E2E tests
+bun test                # Run unit tests (watch mode)
+bun test:run            # Run unit tests once
+bun test:coverage       # Run with coverage
+bun e2e                 # Run E2E tests
 
 # Code Quality
-bun lint             # Run linters
-bun format           # Format code
-bun format:check     # Check formatting (CI)
-bun typecheck        # Type check with tsgo
+bun lint                # Run linters
+bun format              # Format code
+bun format:check        # Check formatting (CI)
+bun typecheck           # Type check with tsgo
 
 # Releases
-bun changeset        # Create a changeset
-bun version          # Version packages
-bun release          # Publish to npm
+bun changeset           # Create a changeset
+bun version             # Version packages
+bun release             # Publish to npm
 ```
 
-## Architecture Decisions
+## Stack
 
-See [docs/adr/](docs/adr/) for architecture decision records.
+| Tool | Purpose |
+|------|---------|
+| **Bun** | Runtime, package manager, test runner |
+| **TypeScript Go** | Type checking (faster than tsc) |
+| **Turborepo** | Build orchestration + remote caching |
+| **Vitest** | Unit testing |
+| **Playwright** | E2E testing |
+| **Biome** | Formatting + linting |
+| **Effect** | Typed errors, services, schemas |
+| **Drizzle** | Database ORM |
+| **Next.js 16** | App framework (Turbopack) |
 
-Key decisions:
-- **ADR-001**: Auth uses Hive + Spoke model with BetterAuth
+## What's Next
+
+**Layer 1: Auth + Next Adapter**
+- `@badass/auth` - BetterAuth with hive+spoke model, device flow
+- `@badass/next` - Next.js adapter for router
+
+**Backlog:**
+- Local dev database (Docker MySQL/Postgres)
+- App template (`create-badass-app`)
+
+## Philosophy
+
+> "Beautiful is better than ugly. Explicit is better than implicit. Simple is better than complex."
+
+- **TDD or GTFO** - Red → Green → Refactor, no exceptions
+- **ADRs for decisions** - Document before implementing
+- **Colocation** - Keep related code together
+- **Server first** - Client when necessary
+- **Parse, don't validate** - Make impossible states impossible
+
+## Contributing
+
+1. Check [docs/adr/](docs/adr/) for architectural context
+2. Write a failing test first
+3. Make it pass
+4. Create a changeset if it affects package consumers
+
+---
+
+```
+        ,     ,
+       (\____/)
+        (_oo_)
+          (O)
+        __||__    \)
+     []/______\[] /
+     / \______/ \/
+    /    /__\
+   (\   /____\
+
+   "With great power comes
+    great responsibility...
+    to write tests first."
+```
