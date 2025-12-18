@@ -61,6 +61,8 @@ What other options were evaluated? Why were they rejected?
 | [005](./005-monorepo-structure.md)| Monorepo Structure: Turborepo, Workspaces, Legacy Submodule | Accepted | 2024-12-18 |
 | [006](./006-testing-strategy.md)  | Testing Strategy: TDD Mandate with Vitest and Playwright | Accepted | 2024-12-18 |
 | [007](./007-cicd-pipeline.md)     | CI/CD Pipeline: GitHub Actions, Intelligent Selection  | Accepted | 2024-12-18 |
+| [008](./008-app-template.md)      | App Template: create-badass-app CLI Scaffolding       | Accepted | 2024-12-18 |
+| [009](./009-local-dev-database.md)| Local Dev Database: Docker Compose + MySQL 8.0        | Accepted | 2024-12-18 |
 
 ## Commands
 
