@@ -52,11 +52,15 @@ What other options were evaluated? Why were they rejected?
 
 ## Index
 
-| ADR                               | Title                                        | Status   | Date       |
-| --------------------------------- | -------------------------------------------- | -------- | ---------- |
-| [001](./001-auth-architecture.md) | Auth Architecture: Hive + Spoke Model        | Accepted | 2024-12-18 |
-| [002](./002-router-pattern.md)    | Router Pattern: Effect-TS Type-State Builder | Accepted | 2024-12-18 |
-| [003](./003-content-model.md)     | Content Model: ContentResource + Collections | Accepted | 2024-12-18 |
+| ADR                               | Title                                                  | Status   | Date       |
+| --------------------------------- | ------------------------------------------------------ | -------- | ---------- |
+| [001](./001-auth-architecture.md) | Auth Architecture: Hive + Spoke Model                  | Accepted | 2024-12-18 |
+| [002](./002-router-pattern.md)    | Router Pattern: Effect-TS Type-State Builder           | Accepted | 2024-12-18 |
+| [003](./003-content-model.md)     | Content Model: ContentResource + Collections           | Accepted | 2024-12-18 |
+| [004](./004-tooling-stack.md)     | Tooling Stack: Bun, Biome, tsgo                        | Accepted | 2024-12-18 |
+| [005](./005-monorepo-structure.md)| Monorepo Structure: Turborepo, Workspaces, Legacy Submodule | Accepted | 2024-12-18 |
+| [006](./006-testing-strategy.md)  | Testing Strategy: TDD Mandate with Vitest and Playwright | Accepted | 2024-12-18 |
+| [007](./007-cicd-pipeline.md)     | CI/CD Pipeline: GitHub Actions, Intelligent Selection  | Accepted | 2024-12-18 |
 
 ## Commands
 
