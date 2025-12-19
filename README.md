@@ -81,8 +81,16 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - Changesets for versioning
 - **159 unit tests + 2 E2E tests passing**
 
-**Key Decisions:**
-- [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model with BetterAuth
+**Key Decisions (9 ADRs):**
+- [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model
+- [ADR-002](docs/adr/002-router-pattern.md): Effect-TS type-state router
+- [ADR-003](docs/adr/003-content-model.md): ContentResource + Collections
+- [ADR-004](docs/adr/004-tooling-stack.md): Bun, Biome, tsgo
+- [ADR-005](docs/adr/005-monorepo-structure.md): Turborepo + Workspaces
+- [ADR-006](docs/adr/006-testing-strategy.md): TDD + Vitest + Playwright
+- [ADR-007](docs/adr/007-cicd-pipeline.md): GitHub Actions + Intelligent E2E
+- [ADR-008](docs/adr/008-app-template.md): create-badass-app CLI
+- [ADR-009](docs/adr/009-local-dev-database.md): Docker Compose + MySQL
 
 ---
 
@@ -249,13 +257,11 @@ If the implementation is hard to explain, it's a bad idea.
 
 ## What's Next
 
-**Layer 1: Auth + Next Adapter**
+**Layer 1: Auth + Infrastructure**
 - `@badass/auth` - BetterAuth with hive+spoke model, device flow
 - `@badass/next` - Next.js adapter for router
-
-**Backlog:**
-- Local dev database (Docker MySQL/Postgres)
-- App template (`create-badass-app`)
+- Local dev database - Docker Compose + MySQL 8.0 ([ADR-009](docs/adr/009-local-dev-database.md))
+- `create-badass-app` - CLI scaffolding tool ([ADR-008](docs/adr/008-app-template.md))
 
 ---
 

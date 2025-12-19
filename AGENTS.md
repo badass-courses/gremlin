@@ -1,5 +1,20 @@
 # AGENTS.md - wizardshit.ai
 
+> **📖 README COMMANDMENT (NON-NEGOTIABLE)**
+>
+> **Keep README.md current. It's the front door.**
+>
+> Update `README.md` when:
+>
+> - Adding new packages, apps, or major features
+> - Creating new ADRs (add to "Key Decisions" list)
+> - Changing scripts, stack, or architecture
+> - Completing roadmap milestones
+>
+> **The README is marketing.** New contributors read it first. Stale READMEs signal abandoned projects.
+
+---
+
 > **📐 ADR COMMANDMENT (NON-NEGOTIABLE)**
 >
 > **Document architectural decisions BEFORE implementing.**
