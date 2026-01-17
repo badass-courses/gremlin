@@ -81,7 +81,7 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - Changesets for versioning
 - **159 unit tests + 2 E2E tests passing**
 
-**Key Decisions (9 ADRs):**
+**Key Decisions (10 ADRs):**
 - [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model
 - [ADR-002](docs/adr/002-router-pattern.md): Effect-TS type-state router
 - [ADR-003](docs/adr/003-content-model.md): ContentResource + Collections
@@ -91,6 +91,7 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - [ADR-007](docs/adr/007-cicd-pipeline.md): GitHub Actions + Intelligent E2E
 - [ADR-008](docs/adr/008-app-template.md): create-badass-app CLI
 - [ADR-009](docs/adr/009-local-dev-database.md): Docker Compose + MySQL
+- [ADR-010](docs/adr/010-ui-component-sync-strategy.md): shadcn + Base UI + Custom Registry
 
 ---
 
