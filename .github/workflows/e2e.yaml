@@ -63,7 +63,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build all
-        run: bun turbo build
+        run: pnpm turbo build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -103,7 +103,7 @@ jobs:
       - name: Run E2E tests
         run: |
           cd apps/wizardshit-ai
-          bunx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          pnpm exec playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           CI: true
 
@@ -141,7 +141,7 @@ jobs:
       - name: Merge reports
         run: |
           cd apps/wizardshit-ai
-          bunx playwright merge-reports --reporter html ../../all-blob-reports
+          pnpm exec playwright merge-reports --reporter html ../../all-blob-reports
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
@@ -178,12 +178,12 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build
-        run: bun turbo build
+        run: pnpm turbo build
 
       - name: Run changed E2E tests
         run: |
           cd apps/wizardshit-ai
-          bunx playwright test --only-changed=${{ github.event.pull_request.base.ref }}
+          pnpm exec playwright test --only-changed=${{ github.event.pull_request.base.ref }}
         env:
           CI: true
         continue-on-error: true

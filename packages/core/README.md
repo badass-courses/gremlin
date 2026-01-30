@@ -13,7 +13,7 @@ Type-safe router builder with Effect-TS integration.
 ## Installation
 
 ```bash
-bun add @badass/core effect zod
+pnpm add @badass/core effect zod
 ```
 
 ## Usage

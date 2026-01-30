@@ -16,7 +16,7 @@ A monorepo with multiple apps and packages needs a CI/CD pipeline that:
 
 Key constraints:
 
-- **Bun monorepo** with Turbo orchestration
+- **pnpm monorepo** with Turbo orchestration
 - **Multiple apps** (wizardshit-ai, future apps)
 - **Shared packages** requiring build step before dependent jobs
 - **E2E tests** are slow (~10min for full suite)
