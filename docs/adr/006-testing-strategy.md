@@ -40,7 +40,7 @@ The problem: Without a mandated testing strategy, developers (human and AI) will
 
 | Layer            | Tool                | Purpose                              |
 | ---------------- | ------------------- | ------------------------------------ |
-| Unit/Integration | Vitest              | Fast, ESM-native, Bun-compatible     |
+| Unit/Integration | Vitest              | Fast, ESM-native, pnpm-compatible     |
 | Effect Code      | `@effect/vitest`    | Effect-aware test helpers            |
 | E2E              | Playwright          | Browser automation with parallelism  |
 | Type-level       | `expectTypeOf`      | Compile-time type assertions         |
@@ -48,7 +48,7 @@ The problem: Without a mandated testing strategy, developers (human and AI) will
 ### Tool Rationale
 
 **Vitest**:
-- Native ESM support (works with Bun runtime)
+- Native ESM support (works with pnpm runtime)
 - Effect-TS compatible
 - Fast watch mode with smart re-runs
 - Compatible with Vitest plugin ecosystem
@@ -95,17 +95,17 @@ Additional patterns:
 
 ```bash
 # Run all package tests
-cd packages/core && bun vitest run
-cd packages/db && bun vitest run
+cd packages/core && pnpm vitest run
+cd packages/db && pnpm vitest run
 
 # Watch mode (auto-rerun on changes)
-bun vitest
+pnpm vitest
 
 # E2E tests
-cd apps/wizardshit-ai && bun playwright test
+cd apps/wizardshit-ai && pnpm exec playwright test
 
 # Type checking (not testing, but related)
-bunx tsgo --noEmit
+pnpm exec tsgo --noEmit
 ```
 
 ### Example Test Structure
@@ -153,7 +153,7 @@ it.effect("fetches user by id", () =>
 - **Living documentation**: Tests document actual behavior, always up-to-date
 - **Refactoring confidence**: Green tests mean safe refactors
 - **Effect-TS integration**: `@effect/vitest` makes testing Effect code natural
-- **Fast feedback loops**: Vitest + Bun = sub-second test runs
+- **Fast feedback loops**: Vitest + pnpm = sub-second test runs
 - **Type safety**: `expectTypeOf` catches API contract changes at compile time
 - **AI compatibility**: Clear patterns for AI agents to follow (TDD is explicit)
 
@@ -178,7 +178,7 @@ it.effect("fetches user by id", () =>
 
 **Why rejected**: 
 - Jest has poor ESM support (still experimental as of 2024)
-- Doesn't work well with Bun runtime (compatibility issues)
+- Doesn't work well with pnpm runtime (compatibility issues)
 - Slower than Vitest for watch mode
 - No native Effect-TS support
 

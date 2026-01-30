@@ -16,7 +16,7 @@ The @badass course platform needs a monorepo structure that:
 
 Key constraints:
 
-- **Bun as runtime**: Using Bun workspaces, not npm/pnpm/yarn
+- **pnpm as runtime**: Using pnpm workspaces, not npm/pnpm/yarn
 - **TypeScript Go**: Fast type checking with `tsgo` instead of `tsc`
 - **Fast tooling**: oxlint, biome, Turborepo for speed
 - **Effect-TS core**: Shared packages use Effect for composability
@@ -132,15 +132,15 @@ The legacy course-builder monorepo is included as a **read-only git submodule**:
 
 ### Negative
 
-- **Workspace complexity**: Developers need to understand Bun workspaces + Turborepo
-- **Dependency hoisting**: Bun hoists deps to root, can hide missing `peerDependencies`
+- **Workspace complexity**: Developers need to understand pnpm workspaces + Turborepo
+- **Dependency hoisting**: pnpm hoists deps to root, can hide missing `peerDependencies`
 - **Task configuration**: Each new task type needs `turbo.json` entry
 - **Submodule maintenance**: `git submodule update` required after clone
 
 ### Neutral
 
 - **Turborepo lock-in**: Committed to Turbo for orchestration (alternatives exist but switching is work)
-- **Build tool evolution**: May need to adjust as Bun's built-in tools mature
+- **Build tool evolution**: May need to adjust as pnpm's built-in tools mature
 - **Remote caching**: Currently using Vercel, could switch to self-hosted
 
 ## Alternatives Considered
@@ -149,7 +149,7 @@ The legacy course-builder monorepo is included as a **read-only git submodule**:
 
 Put all packages in root with manual dependency management.
 
-**Why rejected**: No automatic linking, manual symlinks break. Bun workspaces provide zero-config local package resolution.
+**Why rejected**: No automatic linking, manual symlinks break. pnpm workspaces provide zero-config local package resolution.
 
 ### Alternative 2: Nx Instead of Turborepo
 
@@ -159,9 +159,9 @@ Use Nx for monorepo orchestration.
 
 ### Alternative 3: pnpm Workspaces
 
-Use pnpm instead of Bun for workspace management.
+Use pnpm instead of pnpm for workspace management.
 
-**Why rejected**: Bun is our runtime (AGENTS.md mandate). Using pnpm adds another tool. Bun workspaces + Turborepo covers our needs.
+**Why rejected**: pnpm is our runtime (AGENTS.md mandate). Using pnpm adds another tool. pnpm workspaces + Turborepo covers our needs.
 
 ### Alternative 4: Import Legacy Code Directly
 
@@ -178,7 +178,7 @@ Organize packages by feature domain instead of technical layer.
 ## References
 
 - [Turborepo Documentation](https://turbo.build/repo/docs)
-- [Bun Workspaces](https://bun.sh/docs/install/workspaces)
+- [pnpm Workspaces](https://pnpm.io/workspaces)
 - [Monorepo Tools Comparison](https://monorepo.tools/)
 - [course-builder monorepo](https://github.com/badass-courses/course-builder) - Legacy reference
 - [Vercel Remote Caching](https://vercel.com/docs/monorepos/remote-caching)

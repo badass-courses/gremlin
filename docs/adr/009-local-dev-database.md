@@ -51,13 +51,13 @@ volumes:
 ```json
 {
   "scripts": {
-    "db:up": "docker compose up -d db && bun run db:wait",
+    "db:up": "docker compose up -d db && pnpm run db:wait",
     "db:down": "docker compose down",
-    "db:reset": "docker compose down -v && bun run db:up && bun run db:migrate && bun run db:seed",
-    "db:wait": "bun run ./scripts/wait-for-db.ts",
+    "db:reset": "docker compose down -v && pnpm run db:up && pnpm run db:migrate && pnpm run db:seed",
+    "db:wait": "pnpm run ./scripts/wait-for-db.ts",
     "db:migrate": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:seed": "bun run ./scripts/seed.ts",
+    "db:seed": "pnpm run ./scripts/seed.ts",
     "db:studio": "drizzle-kit studio"
   }
 }
@@ -89,7 +89,7 @@ export default {
    - Idempotent (safe to re-run)
    - Fast (MySQL-native)
 
-2. **TypeScript seed script** (`scripts/seed.ts`): Runs via `bun run db:seed`
+2. **TypeScript seed script** (`scripts/seed.ts`): Runs via `pnpm run db:seed`
    - Uses Drizzle ORM for type-safe data insertion
    - Factories for generating realistic users, content, etc.
    - Resetable (truncate + re-seed for clean slate)
@@ -141,7 +141,7 @@ seed().then(() => console.log('✅ Seed complete'));
 
 ### Positive
 
-- **Zero MySQL knowledge required**: Developers run `bun db:up` and get a working database
+- **Zero MySQL knowledge required**: Developers run `pnpm db:up` and get a working database
 - **Version consistency**: Everyone uses MySQL 8.0 (same as PlanetScale compatibility target)
 - **Fast iteration**: Local database, no network latency, instant feedback
 - **Persistent data**: Database survives restarts (use `db:reset` for clean slate)

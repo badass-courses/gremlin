@@ -42,13 +42,13 @@ export default defineConfig({
 	// Locally, we start the dev server
 	webServer: process.env.CI
 		? {
-				command: "bun run start",
+				command: "pnpm run start",
 				url: "http://localhost:3000",
 				reuseExistingServer: false,
 				timeout: 120 * 1000,
 			}
 		: {
-				command: "bun run dev",
+				command: "pnpm run dev",
 				url: "http://localhost:3000",
 				reuseExistingServer: true,
 				timeout: 120 * 1000,

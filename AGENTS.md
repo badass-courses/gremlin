@@ -57,7 +57,7 @@
 > - **Playwright** for apps (e2e)
 > - `expectTypeOf` for type-level assertions
 >
-> **Run tests**: `cd packages/<pkg> && bun vitest run`
+> **Run tests**: `cd packages/<pkg> && pnpm vitest run`
 >
 > **Lore**: `@knowledge/tdd-patterns.md` | `skills_use(name="testing-patterns")`
 
@@ -71,11 +71,11 @@
 >
 > ```bash
 > # Install to specific workspace
-> bun add <package> --cwd apps/wizardshit-ai
-> bun add -d <package> --cwd apps/wizardshit-ai
+> pnpm add <package> --cwd apps/wizardshit-ai
+> pnpm add -d <package> --cwd apps/wizardshit-ai
 >
 > # Install to root (shared tooling only)
-> bun add -d <package>
+> pnpm add -d <package>
 > ```
 >
 > The `--filter` flag is BROKEN and installs to root. DO NOT USE IT.
@@ -88,13 +88,13 @@
 >
 > ```bash
 > # Add a changeset (interactive)
-> bun changeset
+> pnpm changeset
 >
 > # Version packages (CI usually does this)
-> bun version
+> pnpm version
 >
 > # Publish to npm (CI usually does this)
-> bun release
+> pnpm release
 > ```
 >
 > **When to add a changeset:**
@@ -113,7 +113,7 @@
 
 ## Stack
 
-- **Bun**: Runtime and package manager (not Node.js, npm, pnpm, or yarn)
+- **pnpm**: Runtime and package manager (not Node.js, npm, pnpm, or yarn)
 - **TypeScript Go** (`tsgo`): Use instead of `tsc` for type checking
 - **oxlint**: Fast linter (use instead of eslint for speed)
 - **biome**: Formatter (use instead of prettier)
@@ -132,27 +132,27 @@ wizardshit.ai/
 └── ...
 ```
 
-## Bun: Default Runtime
+## pnpm: Default Runtime
 
-Default to using Bun instead of Node.js.
+Default to using pnpm instead of Node.js.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Use `bunx <package> <command>` instead of `npx <package> <command>`
-- Bun automatically loads `.env`, so don't use dotenv.
+- Use `pnpm exec tsx <file>` instead of `node <file>`
+- Use `pnpm test` instead of `jest` or `vitest`
+- Use `pnpm build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
+- Use `pnpm install` instead of `npm install` or `yarn install` or `pnpm install`
+- Use `pnpm run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
+- Use `pnpm exec <package> <command>` instead of `npx <package> <command>`
+- pnpm automatically loads `.env`, so don't use dotenv.
 
-## Bun APIs
+## pnpm APIs
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
+- `pnpm.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
+- `better-sqlite3` for SQLite. Don't use `better-sqlite3`.
+- `pnpm.redis` for Redis. Don't use `ioredis`.
+- `pnpm.sql` for Postgres. Don't use `pg` or `postgres.js`.
 - `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- `Bun.$\`ls\`` instead of execa.
+- Prefer `pnpm.file` over `node:fs`'s readFile/writeFile
+- `pnpm.$\`ls\`` instead of execa.
 
 ## Testing
 
@@ -160,11 +160,11 @@ Default to using Bun instead of Node.js.
 
 ```bash
 # Run all package tests
-cd packages/core && bun vitest run
-cd packages/db && bun vitest run
+cd packages/core && pnpm vitest run
+cd packages/db && pnpm vitest run
 
 # Watch mode
-bun vitest
+pnpm vitest
 ```
 
 ```ts
@@ -204,7 +204,7 @@ it.effect("runs effect", () =>
 
 ## Frontend
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
+Use HTML imports with `pnpm.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
 
 Server:
 
@@ -212,7 +212,7 @@ Server:
 // index.ts
 import index from "./index.html";
 
-Bun.serve({
+pnpm.serve({
   routes: {
     "/": index,
     "/api/users/:id": {
@@ -240,7 +240,6 @@ Bun.serve({
 });
 ```
 
-HTML files can import `.tsx`, `.jsx` or `.js` files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
 
 ```html
 <!-- index.html -->
@@ -274,7 +273,6 @@ root.render(<Frontend />);
 Then, run index.ts:
 
 ```sh
-bun --hot ./index.ts
+pnpm exec tsx --watch ./index.ts
 ```
 
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.

@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build packages
-        run: bun turbo build --filter="./packages/*"
+        run: pnpm turbo build --filter="./packages/*"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Type checking
@@ -65,7 +65,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Typecheck
-        run: bun turbo typecheck
+        run: pnpm turbo typecheck
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Linting
@@ -81,7 +81,7 @@ jobs:
         uses: ./tooling/gh-actions/setup
 
       - name: Lint
-        run: bun turbo lint
+        run: pnpm turbo lint
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Format check
@@ -97,7 +97,7 @@ jobs:
         uses: ./tooling/gh-actions/setup
 
       - name: Check formatting
-        run: bunx biome check --diagnostic-level=error .
+        run: pnpm exec biome check --diagnostic-level=error .
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Unit tests
@@ -122,6 +122,6 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Run tests
-        run: bun turbo test --filter="./packages/*"
+        run: pnpm turbo test --filter="./packages/*"
         env:
           NODE_ENV: test
