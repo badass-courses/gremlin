@@ -228,6 +228,50 @@ my-new-site/
 
 **Testing**: Playwright for e2e (ADR-006), Vitest for package tests.
 
+### 5. UI Component Strategy
+
+**shadcn + Base UI + Custom Registry** (see ADR-010):
+
+Template includes pre-built components using shadcn patterns with Base UI primitives:
+
+```tsx
+// templates/default/src/components/ui/button.tsx
+import { Button as BaseButton } from "@base-ui-components/react/button"
+
+export const Button = ({ variant, size, ...props }) => (
+  <BaseButton
+    className={cn(buttonVariants({ variant, size }))}
+    {...props}
+  />
+)
+```
+
+**Component categories in template:**
+
+- **UI components** (`src/components/ui/`) - Base UI wrappers (button, card, dialog, etc.)
+- **Marketing components** (`src/components/marketing/`) - Landing page blocks (hero, footer, nav)
+- **Content components** (`src/components/content/`) - ContentResource renderers (post-card, collection-grid)
+
+**Custom registry** (`packages/registry/`) serves component metadata for sync:
+
+```bash
+# Apps can add/update components via shadcn CLI
+bunx shadcn add button
+bunx shadcn add post-card hero
+
+# Check for updates
+bunx create-badass-app drift
+```
+
+**Why shadcn + registry**:
+- ✅ Template remains source of truth
+- ✅ Apps can selectively sync components
+- ✅ Familiar shadcn DX for developers
+- ✅ Base UI provides accessible primitives
+- ✅ Components are copiable/customizable per app
+
+See [ADR-010: UI Component Sync Strategy](./010-ui-component-sync-strategy.md) for full architecture.
+
 ## Consequences
 
 ### Positive
@@ -303,6 +347,7 @@ Use `plop` or similar code generation tool.
 ## References
 
 - [ADR-003: Content Model](./003-content-model.md) - ContentResource + Collections pattern
+- [ADR-010: UI Component Sync Strategy](./010-ui-component-sync-strategy.md) - shadcn + Base UI + custom registry
 - [ADR-001: Auth Architecture](./001-auth-architecture.md) - Hive + Spoke model for multi-app auth
 - [ADR-006: Testing Strategy](./006-testing-strategy.md) - Playwright + Vitest setup
 - [course-builder adapters](../../legacy/course-builder/packages/core/src/adapters.ts) - Adapter pattern reference
