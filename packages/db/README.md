@@ -12,7 +12,7 @@ Drizzle ORM adapter for ContentResource with PostgreSQL.
 ## Installation
 
 ```bash
-bun add @badass/db
+pnpm add @badass/db
 ```
 
 ## Usage
@@ -129,8 +129,8 @@ This ensures uniqueness while keeping URLs readable.
 Generate migrations with drizzle-kit:
 
 ```bash
-bunx drizzle-kit generate
-bunx drizzle-kit migrate
+pnpm exec drizzle-kit generate
+pnpm exec drizzle-kit migrate
 ```
 
 ## License

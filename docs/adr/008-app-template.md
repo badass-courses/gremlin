@@ -28,32 +28,32 @@ Create **`create-badass-app`** - a CLI scaffolding tool that generates new @bada
 
 ### 1. CLI Scaffolding Strategy
 
-Use **Bun's native scaffolding** (no external tool needed):
+Use **pnpm's native scaffolding** (no external tool needed):
 
 ```bash
-bunx create-badass-app my-new-site
+pnpm exec create-badass-app my-new-site
 ```
 
 Implementation:
 
 ```typescript
 // packages/create-badass-app/index.ts
-import { spawn } from "bun";
+import { spawn } from "child_process";
 import { parseArgs } from "util";
 
 const args = parseArgs({
-  args: Bun.argv,
+  args: pnpm.argv,
   options: {
     template: { type: "string", default: "default" },
   },
   allowPositionals: true,
 });
 
-const projectName = args.positionals[2]; // bunx create-badass-app <name>
+const projectName = args.positionals[2]; // pnpm exec create-badass-app <name>
 const template = args.values.template;
 
 // Copy template files
-await Bun.write(
+await pnpm.write(
   `${projectName}/package.json`,
   JSON.stringify({
     name: projectName,
@@ -62,11 +62,11 @@ await Bun.write(
   })
 );
 
-// Run bun install
-spawn(["bun", "install"], { cwd: projectName, stdio: "inherit" });
+// Run pnpm install
+spawn("pnpm", ["install"], { cwd: projectName, stdio: "inherit" });
 ```
 
-**Why not degit/giget?** Bun's file I/O is fast enough, and we avoid external dependencies. Template lives in `packages/create-badass-app/templates/`.
+**Why not degit/giget?** pnpm's file I/O is fast enough, and we avoid external dependencies. Template lives in `packages/create-badass-app/templates/`.
 
 ### 2. Email Capture Strategy
 
@@ -224,7 +224,7 @@ my-new-site/
 
 **Styling**: Tailwind CSS (pre-configured with @badass/ui theme tokens).
 
-**Database**: SQLite via `bun:sqlite` (can swap to Postgres/Turso later).
+**Database**: SQLite via `better-sqlite3` (can swap to Postgres/Turso later).
 
 **Testing**: Playwright for e2e (ADR-006), Vitest for package tests.
 
@@ -232,7 +232,7 @@ my-new-site/
 
 ### Positive
 
-- **Fast project creation** - `bunx create-badass-app my-site` and you're running in <2 min
+- **Fast project creation** - `pnpm exec create-badass-app my-site` and you're running in <2 min
 - **Consistent structure** - All @badass apps follow the same patterns
 - **Own your data** - Email list in your database, not a third-party service
 - **Proven patterns** - ContentResource, Collections, Email adapters battle-tested in course-builder
@@ -244,13 +244,13 @@ my-new-site/
 - **Template maintenance burden** - Need to keep template in sync with core package changes
 - **Database required** - Even simple landing pages need a DB (mitigated: SQLite is zero-config)
 - **Migration complexity** - Existing projects can't auto-upgrade, must manually cherry-pick
-- **CLI complexity** - Bun scaffolding is less feature-rich than tools like degit/plop
+- **CLI complexity** - pnpm scaffolding is less feature-rich than tools like degit/plop
 
 ### Neutral
 
 - **Monorepo-first** - Template assumes workspaces setup, not standalone package
 - **Next.js commitment** - Locked into Next.js App Router (not a static site generator)
-- **Bun runtime** - Requires Bun, not Node.js
+- **pnpm runtime** - Requires pnpm, not Node.js
 
 ## Alternatives Considered
 
@@ -260,7 +260,7 @@ Use existing scaffolding tools like `degit` or `giget` to clone a template repo.
 
 **Why rejected**: 
 - External dependency (degit requires Node, giget is another tool to maintain)
-- Bun's native file I/O is fast enough for copying templates
+- pnpm's native file I/O is fast enough for copying templates
 - Want full control over prompts, validation, post-install steps
 
 ### Alternative 2: ConvertKit-first email capture
@@ -297,8 +297,8 @@ Use `plop` or similar code generation tool.
 
 **Why rejected**:
 - Plop is for adding files to existing projects, not scaffolding new ones
-- Want a `create-*` style CLI for discovery (`bunx create-badass-app`)
-- Simpler to implement with Bun's native APIs
+- Want a `create-*` style CLI for discovery (`pnpm exec create-badass-app`)
+- Simpler to implement with pnpm's native APIs
 
 ## References
 
@@ -307,4 +307,4 @@ Use `plop` or similar code generation tool.
 - [ADR-006: Testing Strategy](./006-testing-strategy.md) - Playwright + Vitest setup
 - [course-builder adapters](../../legacy/course-builder/packages/core/src/adapters.ts) - Adapter pattern reference
 - [create-t3-app](https://create.t3.gg/) - CLI scaffolding inspiration
-- [Bun.write documentation](https://bun.sh/docs/api/file-io#writing-files) - Native file I/O APIs
+- [pnpm.write documentation](https://nodejs.org/api/fs.html) - Native file I/O APIs

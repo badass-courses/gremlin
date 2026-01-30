@@ -85,7 +85,7 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model
 - [ADR-002](docs/adr/002-router-pattern.md): Effect-TS type-state router
 - [ADR-003](docs/adr/003-content-model.md): ContentResource + Collections
-- [ADR-004](docs/adr/004-tooling-stack.md): Bun, Biome, tsgo
+- [ADR-004](docs/adr/004-tooling-stack.md): pnpm, Biome, tsgo
 - [ADR-005](docs/adr/005-monorepo-structure.md): Turborepo + Workspaces
 - [ADR-006](docs/adr/006-testing-strategy.md): TDD + Vitest + Playwright
 - [ADR-007](docs/adr/007-cicd-pipeline.md): GitHub Actions + Intelligent E2E
@@ -98,16 +98,16 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Run development
-bun dev
+pnpm dev
 
 # Run tests
-bun test:run
+pnpm test:run
 
 # Run E2E tests
-bun e2e
+pnpm e2e
 ```
 
 ---
@@ -188,25 +188,25 @@ Add these to your GitHub repo settings:
 
 ```bash
 # Development
-bun dev                 # Start all apps in dev mode
-bun build               # Build all packages and apps
+pnpm dev                 # Start all apps in dev mode
+pnpm build               # Build all packages and apps
 
 # Testing
-bun test                # Run unit tests (watch mode)
-bun test:run            # Run unit tests once
-bun test:coverage       # Run with coverage
-bun e2e                 # Run E2E tests
+pnpm test                # Run unit tests (watch mode)
+pnpm test:run            # Run unit tests once
+pnpm test:coverage       # Run with coverage
+pnpm e2e                 # Run E2E tests
 
 # Code Quality
-bun lint                # Run linters
-bun format              # Format code
-bun format:check        # Check formatting (CI)
-bun typecheck           # Type check with tsgo
+pnpm lint                # Run linters
+pnpm format              # Format code
+pnpm format:check        # Check formatting (CI)
+pnpm typecheck           # Type check with tsgo
 
 # Releases
-bun changeset           # Create a changeset
-bun version             # Version packages
-bun release             # Publish to npm
+pnpm changeset           # Create a changeset
+pnpm version             # Version packages
+pnpm release             # Publish to npm
 ```
 
 ---
@@ -215,7 +215,7 @@ bun release             # Publish to npm
 
 | Tool | Purpose |
 |------|---------|
-| **Bun** | Runtime, package manager, test runner |
+| **pnpm** | Runtime, package manager, test runner |
 | **TypeScript Go** | Type checking (faster than tsc) |
 | **Turborepo** | Build orchestration + remote caching |
 | **Vitest** | Unit testing |
