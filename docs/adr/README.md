@@ -63,6 +63,9 @@ What other options were evaluated? Why were they rejected?
 | [007](./007-cicd-pipeline.md)     | CI/CD Pipeline: GitHub Actions, Intelligent Selection  | Accepted | 2024-12-18 |
 | [008](./008-app-template.md)      | App Template: create-badass-app CLI Scaffolding       | Accepted | 2024-12-18 |
 | [009](./009-local-dev-database.md)| Local Dev Database: Docker Compose + MySQL 8.0        | Accepted | 2024-12-18 |
+| [010](./010-convex-first-provider-adapter-pattern.md) | Convex-First Database with Provider/Adapter Pattern | Proposed | 2026-02-24 |
+| [011](./011-multi-framework-frontend-support.md) | Multi-Framework Frontend Support | Proposed | 2026-02-24 |
+| [012](./012-reference-site-architecture.md) | Reference Site Architecture (wizardshit-ai + gremlin-cms) | Proposed | 2026-02-24 |
 
 ## Commands
 

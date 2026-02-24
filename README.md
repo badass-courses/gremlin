@@ -32,7 +32,7 @@
 
 > **Don't expose it to bright light. Don't get it wet. And never, ever feed it after midnight.**
 
-Monorepo for the next-generation badass course platform. Extracted patterns from [course-builder](https://github.com/badass-courses/course-builder), rebuilt from scratch with modern tooling.
+Monorepo for the next-generation badass course platform. Extracted patterns from [course-builder](https://github.com/badass-courses/course-builder), rebuilt from scratch with modern tooling, a Convex-first data direction, and multi-framework frontend support.
 
 ---
 
@@ -52,17 +52,17 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 
 ---
 
-## Status: Layer 0 Complete
+## Status: Layer 1 Kickoff (Convex + Multi-Framework)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      PROJECT ROADMAP                            │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  [████████████████████] Layer 0: Foundation     ✅ COMPLETE     │
-│  [░░░░░░░░░░░░░░░░░░░░] Layer 1: Auth + Next    ⏳ NEXT UP      │
-│  [░░░░░░░░░░░░░░░░░░░░] Layer 2: Commerce       📋 PLANNED      │
-│  [░░░░░░░░░░░░░░░░░░░░] Layer 3: Content        📋 PLANNED      │
+│  [████████████████████] Layer 0: Foundation            ✅ COMPLETE │
+│  [██░░░░░░░░░░░░░░░░░░] Layer 1: Convex + Frameworks   ⏳ IN PROGRESS │
+│  [░░░░░░░░░░░░░░░░░░░░] Layer 2: Commerce + Auth       📋 PLANNED │
+│  [░░░░░░░░░░░░░░░░░░░░] Layer 3: Content Workflows     📋 PLANNED │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -70,8 +70,8 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 ### What's Built
 
 **Packages:**
-- `@badass/core` - Type-safe router builder, content resource schemas (Zod + Effect)
-- `@badass/db` - Database adapter layer with Drizzle implementation
+- `@gremlincms/core` - Type-safe router builder, content resource schemas (Zod + Effect)
+- `@gremlincms/db` - Provider/adapter database layer (Drizzle today, Convex-first direction)
 
 **Infrastructure:**
 - CI/CD pipeline with intelligent E2E testing
@@ -81,7 +81,7 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - Changesets for versioning
 - **159 unit tests + 2 E2E tests passing**
 
-**Key Decisions (9 ADRs):**
+**Key Decisions (12 ADRs):**
 - [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model
 - [ADR-002](docs/adr/002-router-pattern.md): Effect-TS type-state router
 - [ADR-003](docs/adr/003-content-model.md): ContentResource + Collections
@@ -91,6 +91,9 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - [ADR-007](docs/adr/007-cicd-pipeline.md): GitHub Actions + Intelligent E2E
 - [ADR-008](docs/adr/008-app-template.md): create-badass-app CLI
 - [ADR-009](docs/adr/009-local-dev-database.md): Docker Compose + MySQL
+- [ADR-010](docs/adr/010-convex-first-provider-adapter-pattern.md): Convex-first database with provider/adapter pattern
+- [ADR-011](docs/adr/011-multi-framework-frontend-support.md): Multi-framework frontend support
+- [ADR-012](docs/adr/012-reference-site-architecture.md): Reference site architecture (wizardshit-ai + gremlin-cms)
 
 ---
 
@@ -117,7 +120,8 @@ pnpm e2e
 ```
 gremlin/
 ├── apps/
-│   └── wizardshit-ai/        # Next.js 16 app (Turbopack)
+│   ├── wizardshit-ai/        # Next.js 16 reference site (Turbopack + cache components)
+│   └── gremlin-cms/          # TanStack Start reference site (parity app)
 │
 ├── packages/
 │   ├── core/                 # Router, schemas, types
@@ -125,7 +129,7 @@ gremlin/
 │   │   └── schemas/          # Content resource Zod schemas
 │   │
 │   └── db/                   # Database layer
-│       ├── adapter/          # Drizzle adapter implementation
+│       ├── adapter/          # Provider adapters (Drizzle + Convex strategy)
 │       ├── schema/           # Drizzle table definitions
 │       └── utils/            # Position ordering, etc.
 │
@@ -222,8 +226,10 @@ pnpm release             # Publish to npm
 | **Playwright** | E2E testing |
 | **Biome** | Formatting + linting |
 | **Effect** | Typed errors, services, schemas |
-| **Drizzle** | Database ORM |
-| **Next.js 16** | App framework (Turbopack) |
+| **Convex** | Primary database/runtime for initial sites |
+| **Drizzle** | SQL adapter for portability (Postgres/MySQL) |
+| **Next.js 16** | Reference app framework (App Router + Turbopack) |
+| **TanStack Start** | Reference app framework (Router + Query + Server Functions) |
 
 ---
 
@@ -257,11 +263,11 @@ If the implementation is hard to explain, it's a bad idea.
 
 ## What's Next
 
-**Layer 1: Auth + Infrastructure**
-- `@badass/auth` - BetterAuth with hive+spoke model, device flow
-- `@badass/next` - Next.js adapter for router
-- Local dev database - Docker Compose + MySQL 8.0 ([ADR-009](docs/adr/009-local-dev-database.md))
-- `create-badass-app` - CLI scaffolding tool ([ADR-008](docs/adr/008-app-template.md))
+**Layer 1: Convex + Multi-Framework Parity**
+- Implement Convex adapter in `@gremlincms/db` using `ContentResourceAdapter` as the stable contract ([ADR-010](docs/adr/010-convex-first-provider-adapter-pattern.md))
+- Build framework adapters: `@gremlincms/next` + `@gremlincms/tanstack-start` over shared `@gremlincms/core` procedures ([ADR-011](docs/adr/011-multi-framework-frontend-support.md))
+- Develop parity between `apps/wizardshit-ai` (Next.js) and `apps/gremlin-cms` (TanStack Start) as reference sites ([ADR-012](docs/adr/012-reference-site-architecture.md))
+- Continue auth infrastructure (`@gremlincms/auth`, hive+spoke model) on top of shared adapters
 
 ---
 
