@@ -108,6 +108,7 @@ describe("contentResource table", () => {
 		test("NewContentResource type allows partial data", () => {
 			// This is a compile-time test
 			const newResource: NewContentResource = {
+				id: "cr_new",
 				type: "lesson",
 				createdById: "user_xyz",
 				fields: { title: "Test" },
@@ -201,6 +202,7 @@ describe("schema usage patterns", () => {
 		test("documented slug format is {title}~{guid}", () => {
 			// Characterization test - documents expected pattern
 			const resource: NewContentResource = {
+				id: "cr_slug",
 				type: "lesson",
 				createdById: "user_123",
 				fields: {
@@ -251,6 +253,7 @@ describe("schema usage patterns", () => {
 
 			for (const type of types) {
 				const resource: NewContentResource = {
+					id: `cr_${type}`,
 					type,
 					createdById: "user_123",
 					fields: {},
@@ -276,12 +279,14 @@ describe("schema usage patterns", () => {
 			};
 
 			const lesson: NewContentResource = {
+				id: "cr_lesson",
 				type: "lesson",
 				createdById: "user_123",
 				fields: lessonFields,
 			};
 
 			const module: NewContentResource = {
+				id: "cr_module",
 				type: "module",
 				createdById: "user_123",
 				fields: moduleFields,

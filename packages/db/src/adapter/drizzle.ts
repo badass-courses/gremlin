@@ -1,4 +1,4 @@
-import { asc, eq, and, type SQL } from "drizzle-orm";
+import { and, asc, eq, gt, isNull, type SQL } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { nanoid } from "nanoid";
 import {
@@ -30,6 +30,53 @@ const schema = {
 };
 
 export type DatabaseSchema = typeof schema;
+
+const DEFAULT_PAGE_SIZE = 50;
+const CONTENT_RESOURCE_CURSOR_PREFIX = "crs_";
+const HEX_CURSOR_PATTERN = /^[0-9a-f]+$/;
+
+function encodeCursorToken(value: string): string {
+	let encoded = "";
+
+	for (let index = 0; index < value.length; index += 1) {
+		encoded += value.charCodeAt(index).toString(16).padStart(4, "0");
+	}
+
+	return encoded;
+}
+
+function decodeCursorToken(token: string): string | null {
+	if (token.length === 0 || token.length % 4 !== 0) {
+		return null;
+	}
+
+	if (!HEX_CURSOR_PATTERN.test(token)) {
+		return null;
+	}
+
+	let decoded = "";
+	for (let index = 0; index < token.length; index += 4) {
+		const codePoint = Number.parseInt(token.slice(index, index + 4), 16);
+		if (Number.isNaN(codePoint)) {
+			return null;
+		}
+		decoded += String.fromCharCode(codePoint);
+	}
+
+	return decoded;
+}
+
+function encodeContentResourceCursor(id: string): string {
+	return `${CONTENT_RESOURCE_CURSOR_PREFIX}${encodeCursorToken(id)}`;
+}
+
+function decodeContentResourceCursor(cursor: string | undefined): string | null {
+	if (!cursor || !cursor.startsWith(CONTENT_RESOURCE_CURSOR_PREFIX)) {
+		return null;
+	}
+
+	return decodeCursorToken(cursor.slice(CONTENT_RESOURCE_CURSOR_PREFIX.length));
+}
 
 /**
  * Drizzle implementation of ContentResourceAdapter
@@ -99,39 +146,40 @@ export class DrizzleContentResourceAdapter implements ContentResourceAdapter {
 	): Promise<
 		Awaited<ReturnType<ContentResourceAdapter["listContentResources"]>>
 	> {
-		const { type, createdById, limit, offset, cursor } = filters;
+		const { type, createdById, limit, cursor } = filters;
 		const { depth = 0 } = options;
-		const pageSize = limit ?? 20;
-		const cursorOffset = cursor ? Number.parseInt(cursor, 10) : Number.NaN;
-		const resolvedOffset = offset ?? (Number.isNaN(cursorOffset) ? 0 : cursorOffset);
+		const pageSize = typeof limit === "number" && limit > 0 ? limit : DEFAULT_PAGE_SIZE;
+		const cursorId = decodeContentResourceCursor(cursor);
 
 		// Build where conditions
-		const conditions: SQL[] = [];
+		const conditions: SQL[] = [isNull(contentResource.deletedAt)];
 		if (type) {
 			conditions.push(eq(contentResource.type, type));
 		}
 		if (createdById) {
 			conditions.push(eq(contentResource.createdById, createdById));
 		}
+		if (cursorId) {
+			conditions.push(gt(contentResource.id, cursorId));
+		}
 
 		const resources = await this.db.query.contentResource.findMany({
-			where:
-				conditions.length === 0
-					? undefined
-					: conditions.length === 1
-						? conditions[0]
-						: and(...conditions),
+			where: conditions.length === 1 ? conditions[0] : and(...conditions),
 			with: this.buildNestedQuery(depth),
+			orderBy: asc(contentResource.id),
 			limit: pageSize + 1,
-			offset: resolvedOffset,
 		});
 
 		const items = resources.slice(0, pageSize) as ContentResourceWithResources[];
 		const hasMore = resources.length > pageSize;
+		const lastItem = items[items.length - 1];
 
 		return {
 			items,
-			cursor: hasMore ? String(resolvedOffset + items.length) : undefined,
+			cursor:
+				hasMore && lastItem
+					? encodeContentResourceCursor(lastItem.id)
+					: undefined,
 			hasMore,
 		};
 	}

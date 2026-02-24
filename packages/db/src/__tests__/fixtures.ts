@@ -11,9 +11,34 @@ import type {
 	NewContentResource,
 } from "../schema/index.js";
 import type {
+	ContentResourceAdapter,
 	ContentResourceWithResources,
 	ListContentResourcesFilters,
 } from "../adapter/interface.js";
+
+const DEFAULT_PAGE_SIZE = 50;
+const IN_MEMORY_CURSOR_PREFIX = "idx_";
+
+function encodeInMemoryCursor(index: number): string {
+	return `${IN_MEMORY_CURSOR_PREFIX}${index.toString(36)}`;
+}
+
+function decodeInMemoryCursor(cursor: string | undefined): number | null {
+	if (!cursor || !cursor.startsWith(IN_MEMORY_CURSOR_PREFIX)) {
+		return null;
+	}
+
+	const parsed = Number.parseInt(
+		cursor.slice(IN_MEMORY_CURSOR_PREFIX.length),
+		36,
+	);
+
+	if (Number.isNaN(parsed) || parsed < 0) {
+		return null;
+	}
+
+	return parsed;
+}
 
 /**
  * In-memory fake database for testing
@@ -169,7 +194,7 @@ export class FakeDatabase {
  * Implements ContentResourceAdapter interface using the in-memory
  * FakeDatabase. Use for unit tests that don't need a real database.
  */
-export class FakeContentResourceAdapter {
+export class FakeContentResourceAdapter implements ContentResourceAdapter {
 	constructor(public fakeDb: FakeDatabase) {}
 
 	async getContentResource(
@@ -186,28 +211,33 @@ export class FakeContentResourceAdapter {
 	async listContentResources(
 		filters: ListContentResourcesFilters = {},
 		_options: { depth?: number } = {},
-	): Promise<{
-		items: ContentResourceWithResources[];
-		cursor?: string;
-		hasMore: boolean;
-	}> {
-		const pageSize = filters.limit ?? 20;
-		const cursorOffset = filters.cursor
-			? Number.parseInt(filters.cursor, 10)
-			: Number.NaN;
-		const resolvedOffset =
-			filters.offset ?? (Number.isNaN(cursorOffset) ? 0 : cursorOffset);
-		const resources = await this.fakeDb.findAllResources({
-			...filters,
-			offset: resolvedOffset,
-			limit: pageSize + 1,
-		});
-		const items = resources.slice(0, pageSize) as ContentResourceWithResources[];
-		const hasMore = resources.length > pageSize;
+	): Promise<Awaited<ReturnType<ContentResourceAdapter["listContentResources"]>>> {
+		const pageSize =
+			typeof filters.limit === "number" && filters.limit > 0
+				? filters.limit
+				: DEFAULT_PAGE_SIZE;
+		const cursorIndex = decodeInMemoryCursor(filters.cursor);
+		const startIndex = cursorIndex === null ? 0 : cursorIndex + 1;
+
+		const resources = (
+			await this.fakeDb.findAllResources({
+				type: filters.type,
+				createdById: filters.createdById,
+			})
+		).sort((left, right) => left.id.localeCompare(right.id));
+
+		const items = resources.slice(startIndex, startIndex + pageSize) as
+			| ContentResourceWithResources[]
+			| [];
+		const hasMore = startIndex + items.length < resources.length;
+		const lastIndex = startIndex + items.length - 1;
 
 		return {
 			items,
-			cursor: hasMore ? String(resolvedOffset + items.length) : undefined,
+			cursor:
+				hasMore && items.length > 0
+					? encodeInMemoryCursor(lastIndex)
+					: undefined,
 			hasMore,
 		};
 	}

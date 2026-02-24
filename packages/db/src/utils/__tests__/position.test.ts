@@ -201,9 +201,9 @@ describe("rebalancePositions", () => {
 
 			const result = rebalancePositions(items);
 
-			expect(result[0].id).toBe("first");
-			expect(result[1].id).toBe("second");
-			expect(result[2].id).toBe("third");
+			expect(result[0]!.id).toBe("first");
+			expect(result[1]!.id).toBe("second");
+			expect(result[2]!.id).toBe("third");
 		});
 
 		test("preserves original item properties", () => {
@@ -231,7 +231,7 @@ describe("rebalancePositions", () => {
 			const result = rebalancePositions(items);
 
 			for (let i = 0; i < result.length - 1; i++) {
-				const spacing = result[i + 1].position - result[i].position;
+				const spacing = result[i + 1]!.position - result[i]!.position;
 				expect(spacing).toBe(1.0);
 			}
 		});
@@ -269,9 +269,9 @@ describe("rebalancePositions", () => {
 
 			const result = rebalancePositions(items);
 
-			expect(result[0].id).toBe("a");
-			expect(result[1].id).toBe("b");
-			expect(result[2].id).toBe("c");
+			expect(result[0]!.id).toBe("a");
+			expect(result[1]!.id).toBe("b");
+			expect(result[2]!.id).toBe("c");
 		});
 	});
 
@@ -302,9 +302,9 @@ describe("rebalancePositions", () => {
 			const result = rebalancePositions(items);
 
 			// Should maintain input order when positions are equal
-			expect(result[0].position).toBe(1.0);
-			expect(result[1].position).toBe(2.0);
-			expect(result[2].position).toBe(3.0);
+			expect(result[0]!.position).toBe(1.0);
+			expect(result[1]!.position).toBe(2.0);
+			expect(result[2]!.position).toBe(3.0);
 		});
 	});
 });

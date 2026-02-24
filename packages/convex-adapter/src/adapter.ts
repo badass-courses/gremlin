@@ -63,6 +63,7 @@ export interface ConvexAdapterConfig {
 export class ConvexContentResourceAdapter implements ContentResourceAdapter {
 	private client: ConvexHttpClient
 	private fns: ConvexAdapterConfig['functions']
+	private static readonly DEFAULT_PAGE_SIZE = 50
 
 	constructor(config: ConvexAdapterConfig) {
 		this.client = config.client
@@ -83,8 +84,11 @@ export class ConvexContentResourceAdapter implements ContentResourceAdapter {
 		filters: ListContentResourcesFilters = {},
 		options?: LoadResourceOptions,
 	): Promise<Awaited<ReturnType<ContentResourceAdapter['listContentResources']>>> {
+		const limit = typeof filters.limit === 'number' && filters.limit > 0 ? filters.limit : ConvexContentResourceAdapter.DEFAULT_PAGE_SIZE
+
 		return this.client.query(this.fns.listContentResources, {
 			...filters,
+			limit,
 			depth: options?.depth ?? 0,
 		})
 	}

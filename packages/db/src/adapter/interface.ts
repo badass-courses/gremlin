@@ -71,7 +71,7 @@ export interface ContentResourceAdapter {
 	listContentResources(
 		filters?: ListContentResourcesFilters,
 		options?: LoadResourceOptions,
-	): Promise<Page<ContentResourceWithResources>>;
+	): Promise<Page<ContentResource>>;
 
 	/**
 	 * Create a new ContentResource

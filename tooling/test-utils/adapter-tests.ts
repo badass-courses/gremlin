@@ -27,8 +27,10 @@
 
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import type {
+	ContentResourceAdapter,
 	ContentResource,
 	ContentResourceResource,
+	ListContentResourcesFilters,
 	NewContentResource,
 } from "@gremlincms/db";
 
@@ -62,19 +64,9 @@ export interface TestableAdapter {
 		options?: { depth?: number },
 	): Promise<ContentResource | null>;
 	listContentResources(
-		filters?: {
-			type?: string;
-			createdById?: string;
-			cursor?: string;
-			limit?: number;
-			offset?: number;
-		},
+		filters?: ListContentResourcesFilters,
 		options?: { depth?: number },
-	): Promise<{
-		items: ContentResource[];
-		cursor?: string;
-		hasMore: boolean;
-	}>;
+	): ReturnType<ContentResourceAdapter["listContentResources"]>;
 	createContentResource(data: NewContentResource): Promise<ContentResource>;
 	updateContentResource(
 		id: string,
@@ -149,6 +141,7 @@ export function runContentResourceAdapterTests<
 
 			maybeTest("generates ID if not provided (starts with cr_)", async () => {
 				const data: NewContentResource = {
+					id: "cr_auto_id_seed",
 					type: "lesson",
 					createdById: "user_xyz",
 					fields: { title: "Test" },
@@ -161,6 +154,7 @@ export function runContentResourceAdapterTests<
 
 			maybeTest("sets createdAt and updatedAt timestamps", async () => {
 				const data: NewContentResource = {
+					id: "cr_timestamps",
 					type: "lesson",
 					createdById: "user_xyz",
 					fields: {},
@@ -174,6 +168,7 @@ export function runContentResourceAdapterTests<
 
 			maybeTest("sets deletedAt to null initially", async () => {
 				const data: NewContentResource = {
+					id: "cr_deleted_initially_null",
 					type: "lesson",
 					createdById: "user_xyz",
 					fields: {},
@@ -281,7 +276,7 @@ export function runContentResourceAdapterTests<
 				expect(results.items[0]?.id).toBe("cr_active");
 			});
 
-			maybeTest("supports pagination with limit and offset", async () => {
+			maybeTest("supports cursor pagination", async () => {
 				for (let i = 0; i < 5; i++) {
 					await adapter.createContentResource({
 						id: `cr_${i}`,
@@ -293,16 +288,41 @@ export function runContentResourceAdapterTests<
 
 				const page1 = await adapter.listContentResources({
 					limit: 2,
-					offset: 0,
 				});
 				const page2 = await adapter.listContentResources({
 					limit: 2,
-					offset: 2,
+					cursor: page1.cursor,
+				});
+				const page3 = await adapter.listContentResources({
+					limit: 2,
+					cursor: page2.cursor,
 				});
 
+				expect(page1.hasMore).toBe(true);
+				expect(page1.cursor).toBeDefined();
 				expect(page1.items).toHaveLength(2);
 				expect(page2.items).toHaveLength(2);
 				expect(page1.items[0]?.id).not.toBe(page2.items[0]?.id);
+				expect(page2.hasMore).toBe(true);
+				expect(page3.items).toHaveLength(1);
+				expect(page3.hasMore).toBe(false);
+				expect(page3.cursor).toBeUndefined();
+			});
+
+			maybeTest("uses default page size of 50", async () => {
+				for (let i = 0; i < 55; i++) {
+					await adapter.createContentResource({
+						id: `cr_default_${i}`,
+						type: "lesson",
+						createdById: "user_xyz",
+						fields: {},
+					});
+				}
+
+				const page = await adapter.listContentResources();
+
+				expect(page.items).toHaveLength(50);
+				expect(page.hasMore).toBe(true);
 			});
 		});
 
