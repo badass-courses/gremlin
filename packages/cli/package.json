@@ -1,0 +1,15 @@
+{
+	"name": "@gremlincms/cli",
+	"version": "0.1.0",
+	"type": "module",
+	"bin": {
+		"gremlin": "./dist/cli.js"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "bun build src/cli.ts --outfile dist/cli.js --target bun",
+		"typecheck": "tsc --noEmit"
+	}
+}

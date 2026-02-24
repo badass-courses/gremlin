@@ -75,6 +75,7 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - `@gremlincms/convex-adapter` - Convex adapter primitives for the db interface
 - `@gremlincms/next` - Next.js App Router handler wrapper over `createHttpHandler`
 - `@gremlincms/tanstack` - TanStack Start request handler wrapper over `createHttpHandler`
+- `@gremlincms/cli` - Agent-first CLI for auth, config, RPC calls, content operations, and seeding
 
 **Infrastructure:**
 - CI/CD pipeline with intelligent E2E testing
@@ -84,7 +85,7 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - Changesets for versioning
 - **159 unit tests + 2 E2E tests passing**
 
-**Key Decisions (12 ADRs):**
+**Key Decisions (16 ADRs):**
 - [ADR-001](docs/adr/001-auth-architecture.md): Hive + Spoke auth model
 - [ADR-002](docs/adr/002-router-pattern.md): Effect-TS type-state router
 - [ADR-003](docs/adr/003-content-model.md): ContentResource + Collections
@@ -97,6 +98,10 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 - [ADR-010](docs/adr/010-convex-first-provider-adapter-pattern.md): Convex-first database with provider/adapter pattern
 - [ADR-011](docs/adr/011-multi-framework-frontend-support.md): Multi-framework frontend support
 - [ADR-012](docs/adr/012-reference-site-architecture.md): Reference site architecture (wizardshit-ai + gremlin-cms)
+- [ADR-013](docs/adr/013-domain-scoped-adapter-interfaces.md): Domain-scoped adapter interfaces
+- [ADR-014](docs/adr/014-core-handler-hybrid-routing.md): Core handler hybrid routing model
+- [ADR-015](docs/adr/015-architecture-reconciliation.md): Architecture reconciliation baseline
+- [ADR-016](docs/adr/016-gremlin-cli.md): Gremlin CLI for agent-first operations
 
 ---
 
@@ -134,6 +139,7 @@ gremlin/
 │   ├── convex-adapter/       # Convex adapter package
 │   ├── next/                 # Next.js framework wrapper package
 │   ├── tanstack/             # TanStack Start framework wrapper package
+│   ├── cli/                  # Gremlin CLI package
 │   │
 │   └── db/                   # Database layer
 │       ├── adapter/          # Provider adapters (Drizzle + Convex strategy)
