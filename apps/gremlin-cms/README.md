@@ -1,17 +1,19 @@
 # gremlin-cms
 
-TanStack Start reference implementation for Gremlin.
+Reference implementation of the @gremlincms platform using **TanStack Start**.
 
-## Purpose
+- **Framework**: TanStack Start (React + TanStack Router + Vite)
+- **Database**: Convex via `@gremlincms/convex-adapter` (ADR-010)
+- **Domain**: gremlincms.com
 
-- Validate multi-framework parity with `apps/wizardshit-ai` (Next.js 16)
-- Consume shared packages (`@gremlincms/core`, `@gremlincms/db`) through framework-specific adapters
-- Provide the deployment target for `gremlincms.com` on Vercel
-
-## Scripts
+## Development
 
 ```bash
-pnpm dev
-pnpm build
-pnpm start
+pnpm dev     # Start dev server on port 3000
+pnpm build   # Production build
+pnpm preview # Preview production build
 ```
+
+## Architecture
+
+This app proves the multi-framework strategy (ADR-011) alongside `apps/wizardshit-ai` (Next.js 16). Both consume shared `@gremlincms/core` and `@gremlincms/db` packages.
