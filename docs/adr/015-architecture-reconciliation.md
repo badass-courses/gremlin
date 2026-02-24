@@ -40,15 +40,11 @@ ADR-013 shorthand was illustrative, not prescriptive. Update ADR-013 examples to
 interface GremlinConfig {
   basePath?: string                          // default: '/api/gremlin'
   adapters: {
-    content: ContentAdapter                  // required
-    progress?: ProgressAdapter               // optional
-    commerce?: CommerceAdapter               // optional
-    communication?: CommunicationAdapter     // optional
+    content: ContentResourceAdapter          // required
   }
   auth: SessionProvider                      // required — see §3
-  router?: Router                            // custom procedures
+  router?: Record<string, Procedure<AnyParams>> // custom procedures
   callbacks?: {
-    onWebhook?: (event: WebhookEvent) => void
     onError?: (error: GremlinError) => void
   }
 }
@@ -102,11 +98,11 @@ Core handler calls `config.auth.getSession(request)` — never imports BetterAut
 
 ```ts
 // Execute a single procedure
-async function executeProcedure<T>(
-  procedure: Procedure<any>,
+async function executeProcedure<TProcedure extends Procedure<AnyParams>>(
+  procedure: TProcedure,
   input: unknown,
   context: ExecutionContext,
-): Promise<T>
+): Promise<inferProcedureOutput<TProcedure>>
 
 // Context passed to middleware and handlers
 interface ExecutionContext {
@@ -143,12 +139,18 @@ type GremlinErrorCode =
   | 'INTERNAL'         // 500
 
 class GremlinError extends Error {
+  readonly code: GremlinErrorCode
+  override readonly cause?: unknown
+
   constructor(
-    public code: GremlinErrorCode,
+    code: GremlinErrorCode,
     message: string,
-    public cause?: unknown,
+    cause?: unknown,
   ) {
     super(message)
+    this.name = 'GremlinError'
+    this.code = code
+    this.cause = cause
   }
 }
 ```
@@ -169,13 +171,13 @@ interface Page<T> {
 }
 
 interface PaginationParams {
-  cursor?: string       // preferred
-  limit?: number        // default: 20, max: 100
-  offset?: number       // fallback for SQL adapters
+  cursor?: string
+  limit?: number
+  offset?: number
 }
 ```
 
-`listContentResources` returns `Page<ContentResourceWithResources>` instead of raw array. Convex adapter uses Convex cursors natively. Drizzle adapter uses offset internally.
+`listContentResources` returns `Page<ContentResource>` instead of raw array. Convex adapter uses Convex cursors natively. Drizzle adapter uses offset internally.
 
 ### 7. Middleware Composition
 
@@ -202,10 +204,16 @@ use(middleware) {
 Executor runs middlewares left-to-right, merging returned contexts:
 
 ```ts
-let ctx = {}
-for (const mw of procedure._def.middlewares) {
-  const result = await mw({ input, ctx })
-  ctx = { ...ctx, ...result }
+let mergedContext: Record<string, unknown> = {
+  request: context.request,
+  session: context.session,
+  headers: context.headers,
+}
+
+for (const middleware of procedure._def.middlewares) {
+  const middlewareResult = middleware({ input: validatedInput as never })
+  const resolvedMiddlewareContext = await resolveResult<Record<string, unknown>>(middlewareResult)
+  mergedContext = mergeMiddlewareContext(mergedContext, resolvedMiddlewareContext)
 }
 ```
 
@@ -216,18 +224,18 @@ for (const mw of procedure._def.middlewares) {
 **Decision**: Keep Effect internal to core execution. Framework-facing API is Promise-based.
 
 - `executeProcedure()` returns `Promise<T>`, not `Effect<T>`
-- Handler functions may return `Effect` or `Promise` — executor normalizes both
+- Handler functions may return `Effect`, `Promise`, or sync values — executor normalizes all three
 - Framework packages never import `effect`
 
 ```ts
-// Handler can return either
-type HandlerReturn<T> = Effect.Effect<T, unknown, unknown> | Promise<T> | T
-
-// Executor normalizes
-if (Effect.isEffect(result)) {
-  return Effect.runPromise(result)
+const effectRuntime = await loadEffectRuntime()
+if (effectRuntime?.isEffect(result)) {
+  return effectRuntime.runPromise<TValue>(result)
 }
-return result
+if (isPromiseLike<TValue>(result)) {
+  return await result
+}
+return result as TValue
 ```
 
 ### 9. Framework Package Naming

@@ -72,6 +72,9 @@ Monorepo for the next-generation badass course platform. Extracted patterns from
 **Packages:**
 - `@gremlincms/core` - Type-safe router builder, content resource schemas (Zod + Effect)
 - `@gremlincms/db` - Provider/adapter database layer (Drizzle today, Convex-first direction)
+- `@gremlincms/convex-adapter` - Convex adapter primitives for the db interface
+- `@gremlincms/next` - Next.js App Router handler wrapper over `createHttpHandler`
+- `@gremlincms/tanstack` - TanStack Start request handler wrapper over `createHttpHandler`
 
 **Infrastructure:**
 - CI/CD pipeline with intelligent E2E testing
@@ -127,6 +130,10 @@ gremlin/
 │   ├── core/                 # Router, schemas, types
 │   │   ├── router/           # Type-safe procedure builder
 │   │   └── schemas/          # Content resource Zod schemas
+│   │
+│   ├── convex-adapter/       # Convex adapter package
+│   ├── next/                 # Next.js framework wrapper package
+│   ├── tanstack/             # TanStack Start framework wrapper package
 │   │
 │   └── db/                   # Database layer
 │       ├── adapter/          # Provider adapters (Drizzle + Convex strategy)

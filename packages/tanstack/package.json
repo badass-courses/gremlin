@@ -1,0 +1,23 @@
+{
+	"name": "@gremlincms/tanstack",
+	"version": "0.1.0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"files": ["src"],
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"peerDependencies": {
+		"@gremlincms/core": "workspace:*",
+		"@tanstack/react-start": "^1.0.0"
+	},
+	"devDependencies": {
+		"@gremlincms/core": "workspace:*",
+		"typescript": "^5.9.3"
+	}
+}
