@@ -14,7 +14,10 @@ import type {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createBuilderInternal<TParams extends AnyParams>(
-	_def: { input?: z.ZodType; middleware?: MiddlewareFn<unknown, unknown> } = {},
+	_def: {
+		input?: z.ZodType;
+		middlewares?: MiddlewareFn<unknown, unknown>[];
+	} = {},
 ): ProcedureBuilder<TParams> {
 	return {
 		input(schema) {
@@ -27,7 +30,10 @@ function createBuilderInternal<TParams extends AnyParams>(
 		use(middleware) {
 			return createBuilderInternal({
 				..._def,
-				middleware: middleware as MiddlewareFn<unknown, unknown>,
+				middlewares: [
+					...(_def.middlewares ?? []),
+					middleware as MiddlewareFn<unknown, unknown>,
+				],
 			}) as any;
 		},
 
@@ -36,7 +42,7 @@ function createBuilderInternal<TParams extends AnyParams>(
 				_def: {
 					input: _def.input,
 					output: undefined,
-					middleware: _def.middleware,
+					middlewares: _def.middlewares ?? [],
 					handler: handlerFn as HandlerFn<unknown, unknown, unknown>,
 				},
 				$types: {

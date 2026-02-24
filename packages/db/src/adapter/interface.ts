@@ -4,6 +4,7 @@ import type {
 	NewContentResource,
 	NewContentResourceResource,
 } from "../schema/index.js";
+import type { Page, PaginationParams } from "@gremlincms/core";
 
 /**
  * Options for loading nested resources
@@ -25,6 +26,14 @@ export interface ContentResourceWithResources extends ContentResource {
 			resource: ContentResourceWithResources;
 		}
 	>;
+}
+
+/**
+ * Filters for listing ContentResources
+ */
+export interface ListContentResourcesFilters extends PaginationParams {
+	type?: string;
+	createdById?: string;
 }
 
 /**
@@ -57,17 +66,12 @@ export interface ContentResourceAdapter {
 	 * @param options - Loading options
 	 *
 	 * @example
-	 * const lessons = await adapter.listContentResources({ type: 'lesson' })
+	 * const page = await adapter.listContentResources({ type: 'lesson', limit: 20 })
 	 */
 	listContentResources(
-		filters?: {
-			type?: string;
-			createdById?: string;
-			limit?: number;
-			offset?: number;
-		},
+		filters?: ListContentResourcesFilters,
 		options?: LoadResourceOptions,
-	): Promise<ContentResourceWithResources[]>;
+	): Promise<Page<ContentResourceWithResources>>;
 
 	/**
 	 * Create a new ContentResource

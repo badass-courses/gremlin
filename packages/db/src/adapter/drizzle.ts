@@ -15,6 +15,7 @@ import { getPositionAtEnd } from "../utils/position.js";
 import type {
 	ContentResourceAdapter,
 	ContentResourceWithResources,
+	ListContentResourcesFilters,
 	LoadResourceOptions,
 } from "./interface.js";
 
@@ -93,16 +94,16 @@ export class DrizzleContentResourceAdapter implements ContentResourceAdapter {
 	}
 
 	async listContentResources(
-		filters: {
-			type?: string;
-			createdById?: string;
-			limit?: number;
-			offset?: number;
-		} = {},
+		filters: ListContentResourcesFilters = {},
 		options: LoadResourceOptions = {},
-	): Promise<ContentResourceWithResources[]> {
-		const { type, createdById, limit, offset } = filters;
+	): Promise<
+		Awaited<ReturnType<ContentResourceAdapter["listContentResources"]>>
+	> {
+		const { type, createdById, limit, offset, cursor } = filters;
 		const { depth = 0 } = options;
+		const pageSize = limit ?? 20;
+		const cursorOffset = cursor ? Number.parseInt(cursor, 10) : Number.NaN;
+		const resolvedOffset = offset ?? (Number.isNaN(cursorOffset) ? 0 : cursorOffset);
 
 		// Build where conditions
 		const conditions: SQL[] = [];
@@ -114,13 +115,25 @@ export class DrizzleContentResourceAdapter implements ContentResourceAdapter {
 		}
 
 		const resources = await this.db.query.contentResource.findMany({
-			where: conditions.length > 0 ? conditions[0] : undefined,
+			where:
+				conditions.length === 0
+					? undefined
+					: conditions.length === 1
+						? conditions[0]
+						: and(...conditions),
 			with: this.buildNestedQuery(depth),
-			limit,
-			offset,
+			limit: pageSize + 1,
+			offset: resolvedOffset,
 		});
 
-		return resources as ContentResourceWithResources[];
+		const items = resources.slice(0, pageSize) as ContentResourceWithResources[];
+		const hasMore = resources.length > pageSize;
+
+		return {
+			items,
+			cursor: hasMore ? String(resolvedOffset + items.length) : undefined,
+			hasMore,
+		};
 	}
 
 	async createContentResource(

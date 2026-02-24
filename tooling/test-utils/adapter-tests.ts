@@ -62,9 +62,19 @@ export interface TestableAdapter {
 		options?: { depth?: number },
 	): Promise<ContentResource | null>;
 	listContentResources(
-		filters?: { limit?: number; offset?: number },
+		filters?: {
+			type?: string;
+			createdById?: string;
+			cursor?: string;
+			limit?: number;
+			offset?: number;
+		},
 		options?: { depth?: number },
-	): Promise<ContentResource[]>;
+	): Promise<{
+		items: ContentResource[];
+		cursor?: string;
+		hasMore: boolean;
+	}>;
 	createContentResource(data: NewContentResource): Promise<ContentResource>;
 	updateContentResource(
 		id: string,
@@ -245,7 +255,7 @@ export function runContentResourceAdapterTests<
 
 				const results = await adapter.listContentResources();
 
-				expect(results).toHaveLength(2);
+				expect(results.items).toHaveLength(2);
 			});
 
 			maybeTest("excludes soft-deleted resources", async () => {
@@ -267,8 +277,8 @@ export function runContentResourceAdapterTests<
 
 				const results = await adapter.listContentResources();
 
-				expect(results).toHaveLength(1);
-				expect(results[0].id).toBe("cr_active");
+				expect(results.items).toHaveLength(1);
+				expect(results.items[0]?.id).toBe("cr_active");
 			});
 
 			maybeTest("supports pagination with limit and offset", async () => {
@@ -290,9 +300,9 @@ export function runContentResourceAdapterTests<
 					offset: 2,
 				});
 
-				expect(page1).toHaveLength(2);
-				expect(page2).toHaveLength(2);
-				expect(page1[0].id).not.toBe(page2[0].id);
+				expect(page1.items).toHaveLength(2);
+				expect(page2.items).toHaveLength(2);
+				expect(page1.items[0]?.id).not.toBe(page2.items[0]?.id);
 			});
 		});
 

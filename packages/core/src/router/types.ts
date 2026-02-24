@@ -27,7 +27,7 @@ export interface AnyParams {
  * Middleware function type.
  * Takes input and returns context that will be merged with handler context.
  */
-export type MiddlewareFn<TInput, TContext> = (opts: {
+export type MiddlewareFn<TInput = unknown, TContext = unknown> = (opts: {
 	input: TInput extends UnsetMarker ? undefined : TInput;
 }) => Effect.Effect<TContext, never, never> | TContext | Promise<TContext>;
 
@@ -49,9 +49,7 @@ export interface Procedure<TParams extends AnyParams> {
 			? undefined
 			: TParams["_input"]["in"];
 		output: TParams["_output"];
-		middleware:
-			| MiddlewareFn<TParams["_input"]["out"], TParams["_context"]>
-			| undefined;
+		middlewares: MiddlewareFn[];
 		handler: HandlerFn<
 			TParams["_input"]["out"],
 			TParams["_context"],
@@ -101,7 +99,14 @@ export interface ProcedureBuilder<TParams extends AnyParams> {
 		middleware: MiddlewareFn<TParams["_input"]["out"], TMiddlewareContext>,
 	) => ProcedureBuilder<{
 		_input: TParams["_input"];
-		_middleware: MiddlewareFn<TParams["_input"]["out"], TMiddlewareContext>;
+		_middleware: TParams["_middleware"] extends UnsetMarker
+			? [MiddlewareFn<TParams["_input"]["out"], TMiddlewareContext>]
+			: TParams["_middleware"] extends readonly unknown[]
+				? [
+						...TParams["_middleware"],
+						MiddlewareFn<TParams["_input"]["out"], TMiddlewareContext>,
+					]
+				: [MiddlewareFn<TParams["_input"]["out"], TMiddlewareContext>];
 		_context: TParams["_context"] extends UnsetMarker
 			? TMiddlewareContext
 			: TParams["_context"] & TMiddlewareContext;

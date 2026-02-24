@@ -10,7 +10,10 @@ import type {
 	ContentResourceResource,
 	NewContentResource,
 } from "../schema/index.js";
-import type { ContentResourceWithResources } from "../adapter/interface.js";
+import type {
+	ContentResourceWithResources,
+	ListContentResourcesFilters,
+} from "../adapter/interface.js";
 
 /**
  * In-memory fake database for testing
@@ -37,11 +40,22 @@ export class FakeDatabase {
 	}
 
 	async findAllResources(
-		options: { limit?: number; offset?: number } = {},
+		options: {
+			type?: string;
+			createdById?: string;
+			limit?: number;
+			offset?: number;
+		} = {},
 	): Promise<ContentResource[]> {
 		let results = Array.from(this.resources.values()).filter(
 			(r) => !r.deletedAt,
 		);
+		if (options.type) {
+			results = results.filter((r) => r.type === options.type);
+		}
+		if (options.createdById) {
+			results = results.filter((r) => r.createdById === options.createdById);
+		}
 
 		if (options.offset) {
 			results = results.slice(options.offset);
@@ -170,11 +184,32 @@ export class FakeContentResourceAdapter {
 	}
 
 	async listContentResources(
-		filters: { limit?: number; offset?: number } = {},
+		filters: ListContentResourcesFilters = {},
 		_options: { depth?: number } = {},
-	): Promise<ContentResourceWithResources[]> {
-		const resources = await this.fakeDb.findAllResources(filters);
-		return resources as ContentResourceWithResources[];
+	): Promise<{
+		items: ContentResourceWithResources[];
+		cursor?: string;
+		hasMore: boolean;
+	}> {
+		const pageSize = filters.limit ?? 20;
+		const cursorOffset = filters.cursor
+			? Number.parseInt(filters.cursor, 10)
+			: Number.NaN;
+		const resolvedOffset =
+			filters.offset ?? (Number.isNaN(cursorOffset) ? 0 : cursorOffset);
+		const resources = await this.fakeDb.findAllResources({
+			...filters,
+			offset: resolvedOffset,
+			limit: pageSize + 1,
+		});
+		const items = resources.slice(0, pageSize) as ContentResourceWithResources[];
+		const hasMore = resources.length > pageSize;
+
+		return {
+			items,
+			cursor: hasMore ? String(resolvedOffset + items.length) : undefined,
+			hasMore,
+		};
 	}
 
 	async createContentResource(

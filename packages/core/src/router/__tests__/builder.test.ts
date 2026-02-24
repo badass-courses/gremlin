@@ -53,7 +53,7 @@ describe("procedure builder", () => {
 			expect(proc).toHaveProperty("$types");
 			expect(proc._def).toHaveProperty("input");
 			expect(proc._def).toHaveProperty("output");
-			expect(proc._def).toHaveProperty("middleware");
+			expect(proc._def).toHaveProperty("middlewares");
 			expect(proc._def).toHaveProperty("handler");
 		});
 	});
@@ -81,13 +81,13 @@ describe("procedure builder", () => {
 				.use(middleware)
 				.handler(() => Effect.succeed({ result: "ok" }));
 
-			expect(proc._def.middleware).toBe(middleware);
+			expect(proc._def.middlewares).toEqual([middleware]);
 		});
 
-		it("procedure without middleware has undefined middleware", () => {
+		it("procedure without middleware has empty middleware array", () => {
 			const proc = procedure.handler(() => Effect.succeed({ result: "ok" }));
 
-			expect(proc._def.middleware).toBeUndefined();
+			expect(proc._def.middlewares).toEqual([]);
 		});
 
 		it("procedure stores handler function", () => {
@@ -121,12 +121,11 @@ describe("procedure builder", () => {
 			const proc = procedure.input(schema).use(middleware).handler(handler);
 
 			expect(proc._def.input).toBe(schema);
-			expect(proc._def.middleware).toBe(middleware);
+			expect(proc._def.middlewares).toEqual([middleware]);
 			expect(proc._def.handler).toBe(handler);
 		});
 
-		it("multiple use() calls - last middleware wins", () => {
-			// Characterize current behavior - only one middleware stored
+		it("multiple use() calls append middleware in order", () => {
 			const middleware1 = () => ({ a: 1 });
 			const middleware2 = () => ({ b: 2 });
 
@@ -135,8 +134,7 @@ describe("procedure builder", () => {
 				.use(middleware2)
 				.handler(() => Effect.succeed({}));
 
-			// Current implementation: last middleware overwrites
-			expect(proc._def.middleware).toBe(middleware2);
+			expect(proc._def.middlewares).toEqual([middleware1, middleware2]);
 		});
 
 		it("$types metadata reflects input/output/context types", () => {
@@ -199,7 +197,7 @@ describe("createRouter", () => {
 			const router = createRouter({ test: proc });
 
 			expect(router.test._def.input).toBe(schema);
-			expect(router.test._def.middleware).toBe(middleware);
+			expect(router.test._def.middlewares).toEqual([middleware]);
 			expect(router.test._def.handler).toBe(handler);
 		});
 

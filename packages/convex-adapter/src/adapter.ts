@@ -1,6 +1,7 @@
 import type {
 	ContentResourceAdapter,
 	ContentResourceWithResources,
+	ListContentResourcesFilters,
 	LoadResourceOptions,
 } from '@gremlincms/db'
 import type { ConvexHttpClient } from 'convex/browser'
@@ -79,14 +80,9 @@ export class ConvexContentResourceAdapter implements ContentResourceAdapter {
 	}
 
 	async listContentResources(
-		filters?: {
-			type?: string
-			createdById?: string
-			limit?: number
-			offset?: number
-		},
+		filters: ListContentResourcesFilters = {},
 		options?: LoadResourceOptions,
-	): Promise<ContentResourceWithResources[]> {
+	): Promise<Awaited<ReturnType<ContentResourceAdapter['listContentResources']>>> {
 		return this.client.query(this.fns.listContentResources, {
 			...filters,
 			depth: options?.depth ?? 0,

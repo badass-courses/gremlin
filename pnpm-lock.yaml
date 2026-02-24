@@ -186,6 +186,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@gremlincms/core':
+        specifier: workspace:^
+        version: link:../core
       '@neondatabase/serverless':
         specifier: ^1.0.2
         version: 1.0.2

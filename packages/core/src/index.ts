@@ -45,3 +45,10 @@ export type {
 	CreateContentResource,
 	UpdateContentResource,
 } from "./schemas";
+
+export { GremlinError } from "./errors";
+export type { GremlinErrorCode } from "./errors";
+
+export type { GremlinSession, SessionProvider } from "./auth";
+
+export type { Page, PaginationParams } from "./pagination";

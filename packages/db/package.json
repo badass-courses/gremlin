@@ -14,6 +14,7 @@
 		"format": "biome format src/ --write"
 	},
 	"dependencies": {
+		"@gremlincms/core": "workspace:^",
 		"@neondatabase/serverless": "^1.0.2",
 		"drizzle-orm": "^0.45.1",
 		"nanoid": "^5.1.6",
