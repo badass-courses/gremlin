@@ -2,7 +2,7 @@ import { mergeConfig } from "vitest/config";
 import { baseConfig } from "../../tooling/test-utils/index.ts";
 
 /**
- * Vitest configuration for @badass/db
+ * Vitest configuration for @gremlincms/db
  *
  * Extends the shared base config from tooling/test-utils.
  * Add package-specific settings here as needed.
@@ -10,6 +10,6 @@ import { baseConfig } from "../../tooling/test-utils/index.ts";
 export default mergeConfig(baseConfig, {
 	test: {
 		// Package-specific test settings can go here
-		name: "@badass/db",
+		name: "@gremlincms/db",
 	},
 });

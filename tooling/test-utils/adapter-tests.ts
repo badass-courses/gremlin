@@ -3,7 +3,7 @@
  *
  * Usage:
  * ```ts
- * import { runContentResourceAdapterTests, FakeDatabase, FakeContentResourceAdapter } from "@badass/test-utils/adapter-tests";
+ * import { runContentResourceAdapterTests, FakeDatabase, FakeContentResourceAdapter } from "@gremlincms/test-utils/adapter-tests";
  *
  * // Test with fake adapter
  * runContentResourceAdapterTests({
@@ -30,7 +30,7 @@ import type {
 	ContentResource,
 	ContentResourceResource,
 	NewContentResource,
-} from "@badass/db";
+} from "@gremlincms/db";
 
 /**
  * Options for running adapter tests
@@ -54,7 +54,7 @@ export interface AdapterTestOptions<TAdapter, TContext = unknown> {
 
 /**
  * Minimal adapter interface for testing
- * Matches ContentResourceAdapter from @badass/db
+ * Matches ContentResourceAdapter from @gremlincms/db
  */
 export interface TestableAdapter {
 	getContentResource(

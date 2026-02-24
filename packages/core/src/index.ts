@@ -1,9 +1,9 @@
 /**
- * @badass/core - Type-safe router builder with Effect integration
+ * @gremlincms/core - Type-safe router builder with Effect integration
  *
  * @example
  * ```typescript
- * import { createRouter, procedure } from '@badass/core'
+ * import { createRouter, procedure } from '@gremlincms/core'
  * import { Effect } from 'effect'
  * import { z } from 'zod'
  *

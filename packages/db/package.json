@@ -1,5 +1,5 @@
 {
-	"name": "@badass/db",
+	"name": "@gremlincms/db",
 	"version": "0.0.1",
 	"type": "module",
 	"exports": {
@@ -20,7 +20,7 @@
 		"zod": "^4.2.1"
 	},
 	"devDependencies": {
-		"@badass/test-utils": "workspace:*",
+		"@gremlincms/test-utils": "workspace:*",
 		"drizzle-kit": "^0.31.8",
 		"typescript": "^5.9.3"
 	}

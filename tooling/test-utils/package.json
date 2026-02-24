@@ -1,5 +1,5 @@
 {
-	"name": "@badass/test-utils",
+	"name": "@gremlincms/test-utils",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
@@ -9,7 +9,7 @@
 		"./adapter-tests": "./adapter-tests.ts"
 	},
 	"peerDependencies": {
-		"@badass/db": "workspace:*",
+		"@gremlincms/db": "workspace:*",
 		"vitest": "^4.0.0"
 	}
 }

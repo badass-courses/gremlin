@@ -1,5 +1,5 @@
 /**
- * Test fixtures for @badass/db
+ * Test fixtures for @gremlincms/db
  *
  * Provides FakeDatabase and FakeContentResourceAdapter for testing
  * without a real database connection.

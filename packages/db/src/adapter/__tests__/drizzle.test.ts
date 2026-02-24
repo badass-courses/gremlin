@@ -1,13 +1,13 @@
 /**
  * DrizzleContentResourceAdapter test suite
  *
- * Uses the parameterized test suite from @badass/test-utils with
+ * Uses the parameterized test suite from @gremlincms/test-utils with
  * FakeContentResourceAdapter for fast unit tests.
  *
  * For integration tests with real Postgres, see drizzle.integration.test.ts
  */
 
-import { runContentResourceAdapterTests } from "@badass/test-utils/adapter-tests";
+import { runContentResourceAdapterTests } from "@gremlincms/test-utils/adapter-tests";
 import {
 	FakeContentResourceAdapter,
 	FakeDatabase,

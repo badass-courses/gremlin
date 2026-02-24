@@ -1,0 +1,27 @@
+{
+	"name": "@gremlincms/convex-adapter",
+	"version": "0.1.0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"scripts": {
+		"test": "vitest run",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"convex": "^1.21.0"
+	},
+	"peerDependencies": {
+		"@gremlincms/db": "workspace:*"
+	},
+	"devDependencies": {
+		"@gremlincms/db": "workspace:*",
+		"@gremlincms/test-utils": "workspace:*",
+		"typescript": "^5.7.2",
+		"vitest": "^4.0.0"
+	}
+}

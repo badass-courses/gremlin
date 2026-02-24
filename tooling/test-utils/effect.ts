@@ -16,7 +16,7 @@ import { it } from "@effect/vitest";
  *
  * @example
  * ```ts
- * import { testEffect } from "@badass/test-utils/effect";
+ * import { testEffect } from "@gremlincms/test-utils/effect";
  *
  * testEffect("my test", () =>
  *   Effect.gen(function* () {
@@ -33,7 +33,7 @@ export const testEffect = it.effect;
  *
  * @example
  * ```ts
- * import { it } from "@badass/test-utils/effect";
+ * import { it } from "@gremlincms/test-utils/effect";
  *
  * it.effect("test name", () => Effect.gen(...));
  * it.scoped("scoped test", () => Effect.gen(...));
