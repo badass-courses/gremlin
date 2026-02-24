@@ -121,6 +121,36 @@ All output follows cli-design skill contract:
 - CLI must track per-site sessions
 - Must stay in sync with handler API changes
 
+### Distribution & Auto-Update
+
+**Install script** (hosted at `https://gremlincms.com/install.sh`):
+```bash
+curl -fsSL https://gremlincms.com/install.sh | sh
+```
+- Detects OS (macOS/Linux) and arch (arm64/x64)
+- Downloads correct binary from GitHub Releases
+- Installs to `~/.gremlin/bin/gremlin`
+- Adds `~/.gremlin/bin` to PATH (shell profile append)
+
+**GitHub Releases** — CI builds on tag push:
+- `gremlin-darwin-arm64` (macOS Apple Silicon)
+- `gremlin-darwin-x64` (macOS Intel)
+- `gremlin-linux-x64` (Linux)
+- Bun compile: `bun build src/cli.ts --compile --target=bun-<platform> --outfile gremlin`
+
+**Auto-update** — built into the CLI:
+- On every invocation: background check `https://api.github.com/repos/badass-courses/gremlin/releases/latest`
+- Non-blocking — fires and forgets, result cached in `~/.gremlin/last-update-check` (24h TTL)
+- If newer version available: prints one-line notice after command output
+- `gremlin update` — downloads new binary, replaces self in-place, verifies with `gremlin --version`
+- Version embedded at build time via `--define` or env var
+
+**Version command**:
+```
+gremlin --version
+# → { "ok": true, "command": "gremlin --version", "result": { "version": "0.1.0", "platform": "darwin-arm64" } }
+```
+
 ## Implementation Steps
 
 1. Create `packages/cli/` with package.json, tsconfig
@@ -131,4 +161,7 @@ All output follows cli-design skill contract:
 6. RPC command
 7. Seed command
 8. Root self-documenting command
-9. Build script + install to PATH
+9. Auto-update module (version check, self-update)
+10. Build script (multi-platform compile)
+11. Install script (`install.sh`)
+12. GitHub Actions release workflow
