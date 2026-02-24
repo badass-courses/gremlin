@@ -32,13 +32,22 @@ export type MiddlewareFn<TInput = unknown, TContext = unknown> = (opts: {
 }) => Effect.Effect<TContext, never, never> | TContext | Promise<TContext>;
 
 /**
+ * Handler return type.
+ * Supports Effect, Promise, and synchronous values.
+ */
+export type HandlerResult<TOutput> =
+	| Effect.Effect<TOutput, unknown, unknown>
+	| Promise<TOutput>
+	| TOutput;
+
+/**
  * Handler function type.
- * Receives validated input and middleware context, returns Effect.
+ * Receives validated input and middleware context.
  */
 export type HandlerFn<TInput, TContext, TOutput> = (opts: {
 	input: TInput extends UnsetMarker ? undefined : TInput;
 	ctx: TContext extends UnsetMarker ? Record<string, never> : TContext;
-}) => Effect.Effect<TOutput, unknown, unknown>;
+}) => HandlerResult<TOutput>;
 
 /**
  * Built procedure type returned after handler is set.

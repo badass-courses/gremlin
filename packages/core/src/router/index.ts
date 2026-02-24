@@ -2,6 +2,7 @@ export { composeMiddleware, createContextMiddleware } from "./middleware";
 export type {
 	AnyParams,
 	HandlerFn,
+	HandlerResult,
 	MiddlewareFn,
 	Procedure,
 	ProcedureBuilder,

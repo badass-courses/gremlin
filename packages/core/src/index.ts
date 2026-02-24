@@ -26,6 +26,7 @@ export {
 export type {
 	AnyParams,
 	HandlerFn,
+	HandlerResult,
 	MiddlewareFn,
 	Procedure,
 	ProcedureBuilder,
@@ -52,3 +53,9 @@ export type { GremlinErrorCode } from "./errors";
 export type { GremlinSession, SessionProvider } from "./auth";
 
 export type { Page, PaginationParams } from "./pagination";
+
+export { executeProcedure } from "./executor";
+export type { ExecutionContext } from "./executor";
+
+export { createHttpHandler } from "./handler";
+export type { ContentResourceAdapter, GremlinConfig } from "./handler";
