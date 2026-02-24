@@ -132,27 +132,13 @@ wizardshit.ai/
 └── ...
 ```
 
-## pnpm: Default Runtime
+## pnpm: Package Manager
 
-Default to using pnpm instead of Node.js.
-
-- Use `pnpm exec tsx <file>` instead of `node <file>`
-- Use `pnpm test` instead of `jest` or `vitest`
-- Use `pnpm build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `pnpm install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `pnpm run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
+- Use `pnpm install` instead of `npm install` or `yarn install`
+- Use `pnpm run <script>` or `pnpm <script>` for npm scripts
 - Use `pnpm exec <package> <command>` instead of `npx <package> <command>`
-- pnpm automatically loads `.env`, so don't use dotenv.
-
-## pnpm APIs
-
-- `pnpm.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `better-sqlite3` for SQLite. Don't use `better-sqlite3`.
-- `pnpm.redis` for Redis. Don't use `ioredis`.
-- `pnpm.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `pnpm.file` over `node:fs`'s readFile/writeFile
-- `pnpm.$\`ls\`` instead of execa.
+- Use `pnpm add <pkg>` to install dependencies — **never edit package.json by hand**
+- Use `pnpm exec tsx <file>` to run TypeScript files
 
 ## Testing
 
@@ -204,75 +190,7 @@ it.effect("runs effect", () =>
 
 ## Frontend
 
-Use HTML imports with `pnpm.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
-
-Server:
-
-```ts
-// index.ts
-import index from "./index.html";
-
-pnpm.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    },
-  },
-  development: {
-    hmr: true,
-    console: true,
-  },
-});
-```
-
-
-```html
-<!-- index.html -->
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx
-// frontend.tsx
-import React from "react";
-import { createRoot } from "react-dom/client";
-
-// import .css files directly and it works
-import "./index.css";
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts:
-
-```sh
-pnpm exec tsx --watch ./index.ts
-```
+- **wizardshit-ai**: Next.js 16 (App Router, Turbopack, Cache Components)
+- **gremlin-cms**: TanStack Start (TanStack Router, Vite, Nitro)
+- Both use Tailwind CSS for styling
 
