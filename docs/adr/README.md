@@ -68,6 +68,7 @@ What other options were evaluated? Why were they rejected?
 | [012](./012-reference-site-architecture.md) | Reference Site Architecture (wizardshit-ai + gremlin-cms) | Accepted | 2026-02-24 |
 | [013](./013-domain-scoped-adapter-interfaces.md) | Domain-Scoped Adapter Interfaces | Proposed | 2026-02-24 |
 | [014](./014-core-handler-hybrid-routing.md) | Core Handler with Hybrid Routing | Proposed | 2026-02-24 |
+| [015](./015-architecture-reconciliation.md) | Architecture Reconciliation | Proposed | 2026-02-24 |
 
 ## Commands
 
